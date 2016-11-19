@@ -4,6 +4,6 @@ version = "0.1.0"
 authors = ["Leopold Arkham <leopold.arkham@gmail.com>"]
 description = "A crate to easily represent file sizes in a human-readable format."
 repository = "https://github.com/LeopoldArkham/humansize"
-keywords = ["file size", "humanize", "bytes"]
+keywords = ["file", "size", "humanize", "bytes"]
 
 [dependencies]

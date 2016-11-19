@@ -17,13 +17,15 @@
 //! ```rust
 //! extern crate humansize;
 //! use humansize::{FileSize, file_size_opts as options};
-//!
-//! let size = 1000;
-//! println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
-//!
-//! println!("Size is {}", size.file_size(options::BINARY).unwrap());
-//!
-//! println!("Size is {}", size.file_size(options::CONVENTIONAL).unwrap());
+//! 
+//! fn main() {
+//! 	let size = 1000;
+//! 	println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
+//!	
+//! 	println!("Size is {}", size.file_size(options::BINARY).unwrap());
+//!	
+//! 	println!("Size is {}", size.file_size(options::CONVENTIONAL).unwrap());
+//! }
 //! ```
 //!
 //! If you wish to customize the way sizes are displayed, you may create your own custom `FileSizeOpts` struct

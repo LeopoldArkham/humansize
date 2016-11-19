@@ -15,7 +15,7 @@ fn main() {
 
 
 	// Or use only some custom parameters and adopt the rest from an existing config
-	let semi_custom_options = opts::FileSizeOpts {decimal_zeroes: 3, ..opts::BINARY};
+	let semi_custom_options = opts::FileSizeOpts {decimal_zeroes: 3, ..opts::DECIMAL};
 
-	println!("{}", 2024.file_size(semi_custom_options).unwrap());
+	println!("{}", 1000.file_size(semi_custom_options).unwrap());
 }

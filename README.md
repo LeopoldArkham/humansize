@@ -3,7 +3,7 @@
 [Documentation](https://docs.rs/humansize/0.1.0/humansize/)
 
 Humansize lets you easily represent file sizes in a human-friendly format.
-You can specify your own formatting style, pick among the three defaults provided
+You can specify your own formatting style or pick among the three defaults provided
 by the library:
 
 * Decimal (Multiples of 1000, `KB` units)

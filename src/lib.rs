@@ -62,7 +62,7 @@ pub mod file_size_opts {
         pub decimal_places: usize,
         /// The amount of zeroes to display of the decimal part is zero.
         pub decimal_zeroes: usize,
-        /// Wether to use the full suffix or its abbreveation.
+        /// Whether to use the full suffix or its abbreveation.
         pub long_suffix: bool,
         /// Whether to place a space between value and units.
         pub space: bool

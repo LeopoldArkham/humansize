@@ -65,7 +65,9 @@ pub mod file_size_opts {
         /// Whether to use the full suffix or its abbreveation.
         pub long_suffix: bool,
         /// Whether to place a space between value and units.
-        pub space: bool
+        pub space: bool,
+        /// Optional suffix at the end
+        pub suffix: &'static str
     }
 
     /// Options to display sizes in the binary format
@@ -75,7 +77,8 @@ pub mod file_size_opts {
         decimal_places: 2,
         decimal_zeroes: 0,
         long_suffix: false,
-        space: true
+        space: true,
+        suffix: ""
     };
 
     /// Options to display sizes in the decimal format
@@ -85,7 +88,8 @@ pub mod file_size_opts {
         decimal_places: 2,
         decimal_zeroes: 0,
         long_suffix: false,
-        space: true
+        space: true,
+        suffix: ""
     };
 
     /// Options to display sizes in the conventional format.Standard
@@ -96,7 +100,8 @@ pub mod file_size_opts {
         decimal_places: 2,
         decimal_zeroes: 0,
         long_suffix: false,
-        space: true
+        space: true,
+        suffix: ""
     };
 }
 /// The trait for the `file_size`method
@@ -151,10 +156,10 @@ macro_rules! impl_file_size_u {
     				0.0 => opts.decimal_zeroes,
     				_ => opts.decimal_places
     			};
-			
+
 		let space = match opts.space {
 			true => " ",
-    			false => ""
+    		false => ""
 		};
 
     			Ok(format!("{:.*}{}{}", places, size, space, scale))

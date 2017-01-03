@@ -194,6 +194,13 @@ fn test_sizes() {
 	assert_eq!(1023.file_size(DECIMAL).unwrap(), "1.02 KB");
 	assert_eq!(1024.file_size(BINARY).unwrap(), "1 KiB");
 	assert_eq!(1024.file_size(CONVENTIONAL).unwrap(), "1 KB");
+
     let semi_custom_options = file_size_opts::FileSizeOpts {space: false, ..file_size_opts::DECIMAL};
     assert_eq!(1000.file_size(semi_custom_options).unwrap(), "1KB");
+
+    let semi_custom_options2 = file_size_opts::FileSizeOpts {suffix: "/s", ..file_size_opts::BINARY};
+    assert_eq!(999.file_size(semi_custom_options2).unwrap(), "999 B/s");
+
+    let semi_custom_options3 = file_size_opts::FileSizeOpts {suffix: "/day", space: false, ..file_size_opts::DECIMAL};
+    assert_eq!(1000.file_size(semi_custom_options3).unwrap(), "1KB/day");
 }

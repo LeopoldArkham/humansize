@@ -64,7 +64,7 @@ pub mod file_size_opts {
         pub decimal_zeroes: usize,
         /// Wether to use the full suffix or its abbreveation.
         pub long_suffix: bool,
-        /// Wether to place a space between value and units.
+        /// Whether to place a space between value and units.
         pub space: bool
     }
 
@@ -151,11 +151,11 @@ macro_rules! impl_file_size_u {
     				0.0 => opts.decimal_zeroes,
     				_ => opts.decimal_places
     			};
-
-                let mut space = String::new();
-                if opts.space {
-                    space.push(' ');
-                }
+			
+		let space = match opts.space {
+			true => " ",
+    			false => ""
+		}
 
     			Ok(format!("{:.*}{}{}", places, size, space, scale))
     		}

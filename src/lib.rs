@@ -162,7 +162,7 @@ macro_rules! impl_file_size_u {
     		false => ""
 		};
 
-    			Ok(format!("{:.*}{}{}", places, size, space, scale))
+    			Ok(format!("{:.*}{}{}{}", places, size, space, scale, opts.suffix))
     		}
 	    }
     )*)

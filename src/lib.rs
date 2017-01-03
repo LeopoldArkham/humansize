@@ -155,7 +155,7 @@ macro_rules! impl_file_size_u {
 		let space = match opts.space {
 			true => " ",
     			false => ""
-		}
+		};
 
     			Ok(format!("{:.*}{}{}", places, size, space, scale))
     		}

@@ -3,7 +3,7 @@
 //! Humansize lets you easily represent file sizes in a human-friendly format.
 //! You can specify your own formatting style, pick among the three defaults provided
 //! by the library:
-//! 
+//!
 //! * Decimal (Multiples of 1000, `KB` units)
 //! * Binary (Multiples of 1024, `KiB` units)
 //! * Conventional (Multiples of 1024, `KB` units)
@@ -17,13 +17,13 @@
 //! ```rust
 //! extern crate humansize;
 //! use humansize::{FileSize, file_size_opts as options};
-//! 
+//!
 //! fn main() {
 //! 	let size = 1000;
 //! 	println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
-//!	
+//!
 //! 	println!("Size is {}", size.file_size(options::BINARY).unwrap());
-//!	
+//!
 //! 	println!("Size is {}", size.file_size(options::CONVENTIONAL).unwrap());
 //! }
 //! ```
@@ -63,7 +63,9 @@ pub mod file_size_opts {
         /// The amount of zeroes to display of the decimal part is zero.
         pub decimal_zeroes: usize,
         /// Wether to use the full suffix or its abbreveation.
-        pub long_suffix: bool
+        pub long_suffix: bool,
+        /// Whether to place a space between value and units.
+        pub space: bool
     }
 
     /// Options to display sizes in the binary format
@@ -72,7 +74,8 @@ pub mod file_size_opts {
         units: Standard::Binary,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false
+        long_suffix: false,
+        space: true
     };
 
     /// Options to display sizes in the decimal format
@@ -81,7 +84,8 @@ pub mod file_size_opts {
         units: Standard::Decimal,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false
+        long_suffix: false,
+        space: true
     };
 
     /// Options to display sizes in the conventional format.Standard
@@ -91,12 +95,13 @@ pub mod file_size_opts {
         units: Standard::Decimal,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false
+        long_suffix: false,
+        space: true
     };
 }
 /// The trait for the `file_size`method
 pub trait FileSize {
-	/// Formats self according to the parameters in `opts`. `opts` can either be one of the 
+	/// Formats self according to the parameters in `opts`. `opts` can either be one of the
 	/// three defaults providedby the `file_size_opts` module, or be custom-defined according
 	/// to your needs
 	///
@@ -124,15 +129,15 @@ macro_rules! impl_file_size_u {
         			Standard::Decimal => 1000.0,
         			Standard::Binary => 1024.0
     			};
-			
+
     			let mut size: f64 = *self as f64;
     			let mut scale_idx = 0;
-			
+
     			while size >= divider {
     			    size /= divider;
     				scale_idx += 1;
     			}
-			
+
     			let mut scale = match (opts.units, opts.long_suffix) {
     				(Standard::Decimal, false) => SCALE_DECIMAL[scale_idx],
     				(Standard::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
@@ -141,13 +146,18 @@ macro_rules! impl_file_size_u {
     			};
 
     			if opts.long_suffix && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
-			
+
     			let places = match size.fract() {
     				0.0 => opts.decimal_zeroes,
     				_ => opts.decimal_places
     			};
 			
-    			Ok(format!("{:.*} {}", places, size, scale))
+		let space = match opts.space {
+			true => " ",
+    			false => ""
+		};
+
+    			Ok(format!("{:.*}{}{}", places, size, space, scale))
     		}
 	    }
     )*)
@@ -179,4 +189,6 @@ fn test_sizes() {
 	assert_eq!(1023.file_size(DECIMAL).unwrap(), "1.02 KB");
 	assert_eq!(1024.file_size(BINARY).unwrap(), "1 KiB");
 	assert_eq!(1024.file_size(CONVENTIONAL).unwrap(), "1 KB");
+    let semi_custom_options = file_size_opts::FileSizeOpts {space: false, ..file_size_opts::DECIMAL};
+    assert_eq!(1000.file_size(semi_custom_options).unwrap(), "1KB");
 }

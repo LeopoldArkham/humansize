@@ -93,8 +93,12 @@ pub mod file_size_opts {
         pub decimal_places: usize,
         /// The amount of zeroes to display of the decimal part is zero.
         pub decimal_zeroes: usize,
-        /// Wether to use the full suffix or its abbreveation.
+        /// Whether to use the full suffix or its abbreveation.
         pub long_suffix: bool,
+        /// Whether to place a space between value and units.
+        pub space: bool,
+        /// Optional suffix at the end
+        pub suffix: &'static str,
     }
 
     /// Options to display sizes in the binary format.
@@ -104,6 +108,8 @@ pub mod file_size_opts {
         decimal_places: 2,
         decimal_zeroes: 0,
         long_suffix: false,
+        space: true,
+        suffix: "",
     };
 
     /// Options to display sizes in the decimal format.
@@ -113,6 +119,8 @@ pub mod file_size_opts {
         decimal_places: 2,
         decimal_zeroes: 0,
         long_suffix: false,
+        space: true,
+        suffix: "",
     };
 
     /// Options to display sizes in the conventional format.
@@ -123,6 +131,8 @@ pub mod file_size_opts {
         decimal_places: 2,
         decimal_zeroes: 0,
         long_suffix: false,
+        space: true,
+        suffix: "",
     };
 }
 /// The trait for the `file_size`method
@@ -155,15 +165,15 @@ macro_rules! impl_file_size_u {
         			Kilo::Decimal => 1000.0,
         			Kilo::Binary => 1024.0
     			};
-			
+
     			let mut size: f64 = *self as f64;
     			let mut scale_idx = 0;
-			
+
     			while size >= divider {
     			    size /= divider;
     				scale_idx += 1;
     			}
-			
+
     			let mut scale = match (opts.units, opts.long_suffix) {
     				(Kilo::Decimal, false) => SCALE_DECIMAL[scale_idx],
     				(Kilo::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
@@ -172,13 +182,18 @@ macro_rules! impl_file_size_u {
     			};
 
     			if opts.long_suffix && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
-			
+
     			let places = match size.fract() {
     				0.0 => opts.decimal_zeroes,
     				_ => opts.decimal_places
     			};
-			
-    			Ok(format!("{:.*} {}", places, size, scale))
+
+		let space = match opts.space {
+			true => " ",
+    		false => ""
+		};
+
+    			Ok(format!("{:.*}{}{}{}", places, size, space, scale, opts.suffix))
     		}
 	    }
     )*)
@@ -210,4 +225,19 @@ fn test_sizes() {
     assert_eq!(1023.file_size(DECIMAL).unwrap(), "1.02 KB");
     assert_eq!(1024.file_size(BINARY).unwrap(), "1 KiB");
     assert_eq!(1024.file_size(CONVENTIONAL).unwrap(), "1 KB");
+
+    let semi_custom_options =
+        file_size_opts::FileSizeOpts { space: false, ..file_size_opts::DECIMAL };
+    assert_eq!(1000.file_size(semi_custom_options).unwrap(), "1KB");
+
+    let semi_custom_options2 =
+        file_size_opts::FileSizeOpts { suffix: "/s", ..file_size_opts::BINARY };
+    assert_eq!(999.file_size(semi_custom_options2).unwrap(), "999 B/s");
+
+    let semi_custom_options3 = file_size_opts::FileSizeOpts {
+        suffix: "/day",
+        space: false,
+        ..file_size_opts::DECIMAL
+    };
+    assert_eq!(1000.file_size(semi_custom_options3).unwrap(), "1KB/day");
 }

@@ -8,7 +8,9 @@ fn main() {
 		units: opts::Standard::Decimal,
 		decimal_places: 3,
 		decimal_zeroes: 1,
-		long_suffix: true
+		long_suffix: true,
+		space: false,
+		suffix: ""
 	};
 	// Then use it
 	println!("{}", 3024.file_size(custom_options).unwrap());

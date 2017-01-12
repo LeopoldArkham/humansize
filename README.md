@@ -1,6 +1,9 @@
 # **Humansize**
+
+[Documentation](https://docs.rs/humansize/0.1.0/humansize/)
+
 Humansize lets you easily represent file sizes in a human-friendly format.
-You can specify your own formatting style, pick among the three defaults provided
+You can specify your own formatting style or pick among the three defaults provided
 by the library:
 
 * Decimal (Multiples of 1000, `KB` units)
@@ -8,6 +11,13 @@ by the library:
 * Conventional (Multiples of 1024, `KB` units)
 
 ## How to use it
+
+Cargo.Toml:
+```
+[dependencies]
+humansize = "0.1.1"
+```
+
 Simply import the `FileSize` trait and the options module and call the
 file_size method on any positive integer, using one of the three standards
 provided by the options module.

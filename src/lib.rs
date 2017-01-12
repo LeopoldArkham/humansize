@@ -3,7 +3,7 @@
 //! Humansize lets you easily represent file sizes in a human-friendly format.
 //! You can specify your own formatting style, pick among the three defaults provided
 //! by the library:
-//! 
+//!
 //! * Decimal (Multiples of 1000, `KB` units)
 //! * Binary (Multiples of 1024, `KiB` units)
 //! * Conventional (Multiples of 1024, `KB` units)
@@ -17,13 +17,13 @@
 //! ```rust
 //! extern crate humansize;
 //! use humansize::{FileSize, file_size_opts as options};
-//! 
+//!
 //! fn main() {
 //! 	let size = 1000;
 //! 	println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
-//!	
+//!
 //! 	println!("Size is {}", size.file_size(options::BINARY).unwrap());
-//!	
+//!
 //! 	println!("Size is {}", size.file_size(options::CONVENTIONAL).unwrap());
 //! }
 //! ```
@@ -32,86 +32,117 @@
 //! and pass that to the method. See the `custom_options.rs` file in the example folder.
 
 static SCALE_DECIMAL: [&'static str; 9] = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-static SCALE_DECIMAL_LONG: [&'static str; 9] = ["Bytes", "Kilobytes", "Megabytes", "Gigabytes", "Terabytes", "Petabytes", "Exabytes", "Zettabytes", "Yottabytes"];
+static SCALE_DECIMAL_LONG: [&'static str; 9] = ["Bytes",
+                                                "Kilobytes",
+                                                "Megabytes",
+                                                "Gigabytes",
+                                                "Terabytes",
+                                                "Petabytes",
+                                                "Exabytes",
+                                                "Zettabytes",
+                                                "Yottabytes"];
 
-static SCALE_BINARY: [&'static str; 9] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-static SCALE_BINARY_LONG: [&'static str; 9] = ["Bytes", "Kibibytes", "Mebibytes", "Gibibytes", "Tebibytes", "Pebibytes", "Exbibytes", "Zebibytes", "Yobibytes"];
+static SCALE_BINARY: [&'static str; 9] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB",
+                                          "YiB"];
+static SCALE_BINARY_LONG: [&'static str; 9] = ["Bytes",
+                                               "Kibibytes",
+                                               "Mebibytes",
+                                               "Gibibytes",
+                                               "Tebibytes",
+                                               "Pebibytes",
+                                               "Exbibytes",
+                                               "Zebibytes",
+                                               "Yobibytes"];
 
 
 pub mod file_size_opts {
-	//! Describes the struct that holds the options needed by the `file_size` method.
-	//! The three common formats are provided as constants to be used easily
+    //! Describes the struct that holds the options needed by the `file_size` method.
+    //! The three most common formats are provided as constants to be used easily
 
-
-    #[derive(PartialEq)]
+    #[derive(Debug, PartialEq)]
     /// Holds the standard to use when displying the size.
-    pub enum Standard {
-    	/// The decimal scale and units
+    pub enum Kilo {
+        /// The decimal scale and units
         Decimal,
         /// The binary scale and units
         Binary,
     }
 
+    #[derive(Debug)]
+    /// Fixes the size at a certain scale.
+    pub enum FixedAt {
+        Byte,
+        Kilo,
+        Mega,
+        Giga,
+        Tera,
+        Peta,
+        Exa,
+        Zetta,
+        Yotta,
+    }
+
     /// Holds the options to be passed to the `file_size` method.
+    #[derive(Debug)]
     pub struct FileSizeOpts {
-    	/// The scale to compare the size against.
-        pub divider: Standard,
+        /// The scale to compare the size against.
+        pub divider: Kilo,
         /// The unit set to use.
-        pub units: Standard,
+        pub units: Kilo,
         /// The amount of places if the decimal part is non-zero.
         pub decimal_places: usize,
         /// The amount of zeroes to display of the decimal part is zero.
         pub decimal_zeroes: usize,
         /// Wether to use the full suffix or its abbreveation.
-        pub long_suffix: bool
+        pub long_suffix: bool,
     }
 
-    /// Options to display sizes in the binary format
+    /// Options to display sizes in the binary format.
     pub const BINARY: FileSizeOpts = FileSizeOpts {
-        divider: Standard::Binary,
-        units: Standard::Binary,
+        divider: Kilo::Binary,
+        units: Kilo::Binary,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false
+        long_suffix: false,
     };
 
-    /// Options to display sizes in the decimal format
+    /// Options to display sizes in the decimal format.
     pub const DECIMAL: FileSizeOpts = FileSizeOpts {
-        divider: Standard::Decimal,
-        units: Standard::Decimal,
+        divider: Kilo::Decimal,
+        units: Kilo::Decimal,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false
+        long_suffix: false,
     };
 
-    /// Options to display sizes in the conventional format.Standard
+    /// Options to display sizes in the conventional format.
     /// This uses multiples of 1024 to calculate the scale, but displays decimal units (`KB`, not `KiB`).
     pub const CONVENTIONAL: FileSizeOpts = FileSizeOpts {
-        divider: Standard::Binary,
-        units: Standard::Decimal,
+        divider: Kilo::Binary,
+        units: Kilo::Decimal,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false
+        long_suffix: false,
     };
 }
 /// The trait for the `file_size`method
 pub trait FileSize {
-	/// Formats self according to the parameters in `opts`. `opts` can either be one of the 
-	/// three defaults providedby the `file_size_opts` module, or be custom-defined according
-	/// to your needs
-	///
-	/// # Errors
-	/// Will fail if called on a negative number
-	///
-	/// # Examples
-	/// ```rust
-	/// use humansize::{FileSize, file_size_opts as options};
-	///
-	/// let size = 5128;
-	/// println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
-	/// ```
-	///
-	fn file_size(&self, opts: FileSizeOpts) -> Result<String, String>;
+    /// Formats self according to the parameters in `opts`. `opts` can either be one of the
+    /// three defaults providedby the `file_size_opts` module, or be custom-defined according
+    /// to your needs
+    ///
+    /// # Errors
+    /// Will fail if called on a negative number
+    ///
+    /// # Examples
+    /// ```rust
+    /// use humansize::{FileSize, file_size_opts as options};
+    ///
+    /// let size = 5128;
+    /// println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
+    /// ```
+    ///
+    fn file_size(&self, opts: FileSizeOpts) -> Result<String, String>;
 }
 
 use self::file_size_opts::*;
@@ -121,8 +152,8 @@ macro_rules! impl_file_size_u {
         impl FileSize for $t {
         	fn file_size(&self, opts: FileSizeOpts) -> Result<String, String> {
         		let divider = match opts.divider {
-        			Standard::Decimal => 1000.0,
-        			Standard::Binary => 1024.0
+        			Kilo::Decimal => 1000.0,
+        			Kilo::Binary => 1024.0
     			};
 			
     			let mut size: f64 = *self as f64;
@@ -134,10 +165,10 @@ macro_rules! impl_file_size_u {
     			}
 			
     			let mut scale = match (opts.units, opts.long_suffix) {
-    				(Standard::Decimal, false) => SCALE_DECIMAL[scale_idx],
-    				(Standard::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
-    				(Standard::Binary, false) => SCALE_BINARY[scale_idx],
-    				(Standard::Binary, true) => SCALE_BINARY_LONG[scale_idx]
+    				(Kilo::Decimal, false) => SCALE_DECIMAL[scale_idx],
+    				(Kilo::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
+    				(Kilo::Binary, false) => SCALE_BINARY[scale_idx],
+    				(Kilo::Binary, true) => SCALE_BINARY_LONG[scale_idx]
     			};
 
     			if opts.long_suffix && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
@@ -171,12 +202,12 @@ impl_file_size_i!(for isize i8 i16 i32 i64);
 
 #[test]
 fn test_sizes() {
-	assert_eq!(0.file_size(BINARY).unwrap(), "0 B");
-	assert_eq!(999.file_size(BINARY).unwrap(), "999 B");
-	assert_eq!(1000.file_size(BINARY).unwrap(), "1000 B");
-	assert_eq!(1000.file_size(DECIMAL).unwrap(), "1 KB");
-	assert_eq!(1023.file_size(BINARY).unwrap(), "1023 B");
-	assert_eq!(1023.file_size(DECIMAL).unwrap(), "1.02 KB");
-	assert_eq!(1024.file_size(BINARY).unwrap(), "1 KiB");
-	assert_eq!(1024.file_size(CONVENTIONAL).unwrap(), "1 KB");
+    assert_eq!(0.file_size(BINARY).unwrap(), "0 B");
+    assert_eq!(999.file_size(BINARY).unwrap(), "999 B");
+    assert_eq!(1000.file_size(BINARY).unwrap(), "1000 B");
+    assert_eq!(1000.file_size(DECIMAL).unwrap(), "1 KB");
+    assert_eq!(1023.file_size(BINARY).unwrap(), "1023 B");
+    assert_eq!(1023.file_size(DECIMAL).unwrap(), "1.02 KB");
+    assert_eq!(1024.file_size(BINARY).unwrap(), "1 KiB");
+    assert_eq!(1024.file_size(CONVENTIONAL).unwrap(), "1 KB");
 }

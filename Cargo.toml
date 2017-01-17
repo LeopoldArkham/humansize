@@ -5,7 +5,7 @@ authors = ["Leopold Arkham <leopold.arkham@gmail.com>"]
 description = "A configurable crate to easily represent file sizes in a human-readable format."
 repository = "https://github.com/LeopoldArkham/humansize"
 documentation = "https://docs.rs/humansize/0.1.0/humansize/"
-keywords = ["file", "size", "sizes" "humanize", "bytes"]
+keywords = ["file", "size", "sizes", "humanize", "bytes"]
 license = "MIT OR Apache-2.0"
 
 [dependencies] 

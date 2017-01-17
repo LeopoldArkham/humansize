@@ -68,8 +68,8 @@ pub mod file_size_opts {
         Binary,
     }
 
-    #[derive(Debug)]
-    /// Fixes the size at a certain scale.
+    #[derive(Debug, Copy, Clone)]
+    /// Forces a certain representation of the resulting file size.
     pub enum FixedAt {
         Byte,
         Kilo,
@@ -80,6 +80,7 @@ pub mod file_size_opts {
         Exa,
         Zetta,
         Yotta,
+        No,
     }
 
     /// Holds the options to be passed to the `file_size` method.
@@ -93,8 +94,10 @@ pub mod file_size_opts {
         pub decimal_places: usize,
         /// The amount of zeroes to display of the decimal part is zero.
         pub decimal_zeroes: usize,
+        /// Whether to force a certain representation and if so, which one.
+        pub fixed_at: FixedAt,
         /// Whether to use the full suffix or its abbreveation.
-        pub long_suffix: bool,
+        pub long_units: bool,
         /// Whether to place a space between value and units.
         pub space: bool,
         /// Optional suffix at the end
@@ -107,7 +110,8 @@ pub mod file_size_opts {
         units: Kilo::Binary,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false,
+        fixed_at: FixedAt::No,
+        long_units: false,
         space: true,
         suffix: "",
     };
@@ -118,7 +122,8 @@ pub mod file_size_opts {
         units: Kilo::Decimal,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false,
+        fixed_at: FixedAt::No,
+        long_units: false,
         space: true,
         suffix: "",
     };
@@ -130,7 +135,8 @@ pub mod file_size_opts {
         units: Kilo::Decimal,
         decimal_places: 2,
         decimal_zeroes: 0,
-        long_suffix: false,
+        fixed_at: FixedAt::No,
+        long_units: false,
         space: true,
         suffix: "",
     };
@@ -169,29 +175,43 @@ macro_rules! impl_file_size_u {
     			let mut size: f64 = *self as f64;
     			let mut scale_idx = 0;
 
-    			while size >= divider {
-    			    size /= divider;
-    				scale_idx += 1;
-    			}
+				match opts.fixed_at {
+                    FixedAt::No => {
+                        while size >= divider {
+                            size /= divider;
+                            scale_idx += 1;
+                        }
+                    }
+                    val @ _ => {
+                        while scale_idx != val as usize {
+                            size /= divider;
+                            scale_idx += 1;
+                            println!("Yup");
+                        }
+                    }
+                }
 
-    			let mut scale = match (opts.units, opts.long_suffix) {
+                // println!("max: {}, idx: {}", max, scale_idx);
+
+    			let mut scale = match (opts.units, opts.long_units) {
     				(Kilo::Decimal, false) => SCALE_DECIMAL[scale_idx],
     				(Kilo::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
     				(Kilo::Binary, false) => SCALE_BINARY[scale_idx],
     				(Kilo::Binary, true) => SCALE_BINARY_LONG[scale_idx]
     			};
 
-    			if opts.long_suffix && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
+				// Remove "s" from the scale if the size is 1.x
+    			if opts.long_units && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
 
     			let places = match size.fract() {
     				0.0 => opts.decimal_zeroes,
     				_ => opts.decimal_places
     			};
 
-		let space = match opts.space {
-			true => " ",
-    		false => ""
-		};
+				let space = match opts.space {
+					true => " ",
+					false => ""
+				};
 
     			Ok(format!("{:.*}{}{}{}", places, size, space, scale, opts.suffix))
     		}
@@ -240,4 +260,23 @@ fn test_sizes() {
         ..file_size_opts::DECIMAL
     };
     assert_eq!(1000.file_size(semi_custom_options3).unwrap(), "1KB/day");
+
+    let semi_custom_options4 = file_size_opts::FileSizeOpts {
+        fixed_at: file_size_opts::FixedAt::Byte,
+        ..file_size_opts::BINARY
+    };
+    assert_eq!(2048.file_size(semi_custom_options4).unwrap(), "2048 B");
+
+    let semi_custom_options4 = file_size_opts::FileSizeOpts {
+        fixed_at: file_size_opts::FixedAt::Kilo,
+        ..file_size_opts::BINARY
+    };
+    assert_eq!(16584975.file_size(semi_custom_options4).unwrap(), "16196.26 KiB");
+
+    let semi_custom_options4 = file_size_opts::FileSizeOpts {
+        fixed_at: file_size_opts::FixedAt::Tera,
+        decimal_places: 10,
+        ..file_size_opts::BINARY
+    };
+    assert_eq!(15284975.file_size(semi_custom_options4).unwrap(), "0.01 GiB");
 }

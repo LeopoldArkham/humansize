@@ -15,7 +15,7 @@ by the library:
 Cargo.Toml:
 ```
 [dependencies]
-humansize = "0.1.1"
+humansize = "1.0.0"
 ```
 
 Simply import the `FileSize` trait and the options module and call the

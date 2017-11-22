@@ -1,4 +1,4 @@
-# **Humansize**
+# **Humansize** ![travis badge](https://travis-ci.org/LeopoldArkham/humansize.svg?branch=master)
 
 [Documentation](https://docs.rs/humansize/0.1.0/humansize/)
 

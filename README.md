@@ -22,7 +22,7 @@ Simply import the `FileSize` trait and the options module and call the
 file_size method on any positive integer, using one of the three standards
 provided by the options module.
 
-```rust
+```rust,no_run
 extern crate humansize;
 use humansize::{FileSize, file_size_opts as options};
 

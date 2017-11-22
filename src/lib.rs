@@ -90,9 +90,9 @@ pub mod file_size_opts {
         pub divider: Kilo,
         /// The unit set to use.
         pub units: Kilo,
-        /// The amount of places if the decimal part is non-zero.
+        /// The amount of decimal places to display if the decimal part is non-zero.
         pub decimal_places: usize,
-        /// The amount of zeroes to display of the decimal part is zero.
+        /// The amount of zeroes to display if the decimal part is zero.
         pub decimal_zeroes: usize,
         /// Whether to force a certain representation and if so, which one.
         pub fixed_at: FixedAt,
@@ -186,12 +186,9 @@ macro_rules! impl_file_size_u {
                         while scale_idx != val as usize {
                             size /= divider;
                             scale_idx += 1;
-                            println!("Yup");
                         }
                     }
                 }
-
-                // println!("max: {}, idx: {}", max, scale_idx);
 
     			let mut scale = match (opts.units, opts.long_units) {
     				(Kilo::Decimal, false) => SCALE_DECIMAL[scale_idx],
@@ -202,11 +199,12 @@ macro_rules! impl_file_size_u {
 
 				// Remove "s" from the scale if the size is 1.x
     			if opts.long_units && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
-
-    			let places = match size.fract() {
-    				0.0 => opts.decimal_zeroes,
-    				_ => opts.decimal_places
-    			};
+    			
+                let places = if size.fract() == 0.0 {
+                    opts.decimal_zeroes
+                } else {
+                    opts.decimal_places
+                };
 
 				let space = match opts.space {
 					true => " ",
@@ -267,16 +265,16 @@ fn test_sizes() {
     };
     assert_eq!(2048.file_size(semi_custom_options4).unwrap(), "2048 B");
 
-    let semi_custom_options4 = file_size_opts::FileSizeOpts {
+    let semi_custom_options5 = file_size_opts::FileSizeOpts {
         fixed_at: file_size_opts::FixedAt::Kilo,
         ..file_size_opts::BINARY
     };
-    assert_eq!(16584975.file_size(semi_custom_options4).unwrap(), "16196.26 KiB");
+    assert_eq!(16584975.file_size(semi_custom_options5).unwrap(), "16196.26 KiB");
 
-    let semi_custom_options4 = file_size_opts::FileSizeOpts {
+    let semi_custom_options6 = file_size_opts::FileSizeOpts {
         fixed_at: file_size_opts::FixedAt::Tera,
         decimal_places: 10,
         ..file_size_opts::BINARY
     };
-    assert_eq!(15284975.file_size(semi_custom_options4).unwrap(), "0.01 GiB");
+    assert_eq!(15284975.file_size(semi_custom_options6).unwrap(), "0.0000139016 TiB");
 }

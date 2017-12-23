@@ -1,10 +1,10 @@
 [package]
 name = "humansize"
-version = "1.0.2"
+version = "1.1.0"
 authors = ["Leopold Arkham <leopold.arkham@gmail.com>"]
 description = "A configurable crate to easily represent file sizes in a human-readable format."
 repository = "https://github.com/LeopoldArkham/humansize"
-documentation = "https://docs.rs/humansize/0.1.0/humansize/"
+documentation = "https://docs.rs/humansize/1.1.0/humansize/"
 keywords = ["file", "size", "sizes", "humanize", "bytes"]
 categories = ["value-formatting"]
 license = "MIT/Apache-2.0"

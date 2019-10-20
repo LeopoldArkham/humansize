@@ -182,17 +182,17 @@ use self::file_size_opts::*;
 macro_rules! impl_file_size_u {
     (for $($t:ty)*) => ($(
         impl FileSize for $t {
-        	fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, String> {
+            fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, String> {
                 let opts = _opts.as_ref();
-        		let divider = match opts.divider {
-        			Kilo::Decimal => 1000.0,
-        			Kilo::Binary => 1024.0
-    			};
+                let divider = match opts.divider {
+                    Kilo::Decimal => 1000.0,
+                    Kilo::Binary => 1024.0
+                };
 
-    			let mut size: f64 = *self as f64;
-    			let mut scale_idx = 0;
+                let mut size: f64 = *self as f64;
+                let mut scale_idx = 0;
 
-				match opts.fixed_at {
+                match opts.fixed_at {
                     FixedAt::No => {
                         while size >= divider {
                             size /= divider;
@@ -207,39 +207,39 @@ macro_rules! impl_file_size_u {
                     }
                 }
 
-    			let mut scale = match (opts.units, opts.long_units) {
-    				(Kilo::Decimal, false) => SCALE_DECIMAL[scale_idx],
-    				(Kilo::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
-    				(Kilo::Binary, false) => SCALE_BINARY[scale_idx],
-    				(Kilo::Binary, true) => SCALE_BINARY_LONG[scale_idx]
-    			};
+                let mut scale = match (opts.units, opts.long_units) {
+                    (Kilo::Decimal, false) => SCALE_DECIMAL[scale_idx],
+                    (Kilo::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
+                    (Kilo::Binary, false) => SCALE_BINARY[scale_idx],
+                    (Kilo::Binary, true) => SCALE_BINARY_LONG[scale_idx]
+                };
 
-				// Remove "s" from the scale if the size is 1.x
-    			if opts.long_units && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
-    			
+                // Remove "s" from the scale if the size is 1.x
+                if opts.long_units && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
+                
                 let places = if size.fract() == 0.0 {
                     opts.decimal_zeroes
                 } else {
                     opts.decimal_places
                 };
 
-				let space = match opts.space {
-					true => " ",
-					false => ""
-				};
+                let space = match opts.space {
+                    true => " ",
+                    false => ""
+                };
 
-    			Ok(format!("{:.*}{}{}{}", places, size, space, scale, opts.suffix))
-    		}
-	    }
+                Ok(format!("{:.*}{}{}{}", places, size, space, scale, opts.suffix))
+            }
+        }
     )*)
 }
 
 macro_rules! impl_file_size_i {
     (for $($t:ty)*) => ($(
         impl FileSize for $t {
-        	fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, String> {
+            fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, String> {
                 let opts = _opts.as_ref();
-        		if *self < 0 && !opts.allow_negative { 
+                if *self < 0 && !opts.allow_negative { 
                     return Err("Tried calling file_size on a negative value".to_owned());
                 } else {
                     let sign = if *self < 0 {
@@ -248,11 +248,11 @@ macro_rules! impl_file_size_i {
                         ""
                     };
 
-        		    Ok(format!("{}{}", sign, (self.abs() as u64).file_size(opts)?))
+                    Ok(format!("{}{}", sign, (self.abs() as u64).file_size(opts)?))
                 }
 
-    		}
-	    }
+            }
+        }
     )*)
 }
 

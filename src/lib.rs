@@ -156,6 +156,7 @@ pub mod file_size_opts {
         allow_negative: false,
     };
 }
+
 /// The trait for the `file_size`method
 pub trait FileSize {
     /// Formats self according to the parameters in `opts`. `opts` can either be one of the

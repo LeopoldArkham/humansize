@@ -31,7 +31,20 @@
 //! If you wish to customize the way sizes are displayed, you may create your own custom `FileSizeOpts` struct
 //! and pass that to the method. See the `custom_options.rs` file in the example folder.
 
-static SCALE_DECIMAL: [&'static str; 9] = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+static SCALE_DECIMAL: [&'static str; 9] = [
+    "B",
+    "KB",
+    "MB",
+    "GB",
+    "TB",
+    "PB",
+    "EB",
+    "ZB",
+    "YB",
+];
+
+
 static SCALE_DECIMAL_LONG: [&'static str; 9] = [
     "Bytes",
     "Kilobytes",
@@ -44,8 +57,20 @@ static SCALE_DECIMAL_LONG: [&'static str; 9] = [
     "Yottabytes",
 ];
 
-static SCALE_BINARY: [&'static str; 9] =
-    ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+
+static SCALE_BINARY: [&'static str; 9] =[
+    "B",
+    "KiB",
+    "MiB",
+    "GiB",
+    "TiB",
+    "PiB",
+    "EiB",
+    "ZiB",
+    "YiB",
+];
+
+
 static SCALE_BINARY_LONG: [&'static str; 9] = [
     "Bytes",
     "Kibibytes",
@@ -72,6 +97,7 @@ pub mod file_size_opts {
         Binary,
     }
 
+
     #[derive(Debug, Copy, Clone)]
     /// Forces a certain representation of the resulting file size.
     pub enum FixedAt {
@@ -87,34 +113,45 @@ pub mod file_size_opts {
         No,
     }
 
+
     /// Holds the options for the `file_size` method.
     #[derive(Debug)]
     pub struct FileSizeOpts {
         /// The scale (binary/decimal) to divide against.
         pub divider: Kilo,
+
         /// The unit set to display.
         pub units: Kilo,
+
         /// The amount of decimal places to display if the decimal part is non-zero.
         pub decimal_places: usize,
+
         /// The amount of zeroes to display if the decimal part is zero.
         pub decimal_zeroes: usize,
+
         /// Whether to force a certain representation and if so, which one.
         pub fixed_at: FixedAt,
+
         /// Whether to use the full suffix or its abbreveation.
         pub long_units: bool,
+
         /// Whether to place a space between value and units.
         pub space: bool,
+
         /// An optional suffix which will be appended after the unit.
         pub suffix: &'static str,
+
         /// Whether to allow negative numbers as input. If `False`, negative values will return an error.
         pub allow_negative: bool,
     }
+
 
     impl AsRef<FileSizeOpts> for FileSizeOpts {
         fn as_ref(&self) -> &FileSizeOpts {
             self
         }
     }
+
 
     /// Options to display sizes in the binary format.
     pub const BINARY: FileSizeOpts = FileSizeOpts {
@@ -129,6 +166,7 @@ pub mod file_size_opts {
         allow_negative: false,
     };
 
+
     /// Options to display sizes in the decimal format.
     pub const DECIMAL: FileSizeOpts = FileSizeOpts {
         divider: Kilo::Decimal,
@@ -141,6 +179,7 @@ pub mod file_size_opts {
         suffix: "",
         allow_negative: false,
     };
+
 
     /// Options to display sizes in the "conventional" format.
     /// This 1024 as the value of the `Kilo`, but displays decimal-style units (`KB`, not `KiB`).
@@ -156,6 +195,7 @@ pub mod file_size_opts {
         allow_negative: false,
     };
 }
+
 
 /// The trait for the `file_size`method
 pub trait FileSize {
@@ -178,7 +218,9 @@ pub trait FileSize {
     fn file_size<T: AsRef<FileSizeOpts>>(&self, opts: T) -> Result<String, String>;
 }
 
+
 use self::file_size_opts::*;
+
 
 macro_rules! impl_file_size_u {
     (for $($t:ty)*) => ($(
@@ -235,6 +277,7 @@ macro_rules! impl_file_size_u {
     )*)
 }
 
+
 macro_rules! impl_file_size_i {
     (for $($t:ty)*) => ($(
         impl FileSize for $t {
@@ -256,6 +299,7 @@ macro_rules! impl_file_size_i {
         }
     )*)
 }
+
 
 impl_file_size_u!(for usize u8 u16 u32 u64);
 impl_file_size_i!(for isize i8 i16 i32 i64);

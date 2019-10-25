@@ -1,5 +1,5 @@
 extern crate humansize;
-use humansize::{FileSize, file_size_opts as opts};
+use humansize::{file_size_opts as opts, FileSize};
 
 fn main() {
     // Declare a fully custom option struct
@@ -16,7 +16,6 @@ fn main() {
     };
     // Then use it
     println!("{}", 3024.file_size(custom_options).unwrap());
-
 
     // Or use only some custom parameters and adopt the rest from an existing config
     let semi_custom_options = opts::FileSizeOpts {

@@ -58,7 +58,6 @@ static SCALE_BINARY_LONG: [&'static str; 9] = [
     "Yobibytes",
 ];
 
-
 pub mod file_size_opts {
     //! Describes the struct that holds the options needed by the `file_size` method.
     //! The three most common formats are provided as constants to be used easily
@@ -216,7 +215,7 @@ macro_rules! impl_file_size_u {
 
 				// Remove "s" from the scale if the size is 1.x
     			if opts.long_units && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
-    			
+
                 let places = if size.fract() == 0.0 {
                     opts.decimal_zeroes
                 } else {
@@ -239,7 +238,7 @@ macro_rules! impl_file_size_i {
         impl FileSize for $t {
         	fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, String> {
                 let opts = _opts.as_ref();
-        		if *self < 0 && !opts.allow_negative { 
+        		if *self < 0 && !opts.allow_negative {
                     return Err("Tried calling file_size on a negative value".to_owned());
                 } else {
                     let sign = if *self < 0 {
@@ -258,7 +257,6 @@ macro_rules! impl_file_size_i {
 
 impl_file_size_u!(for usize u8 u16 u32 u64);
 impl_file_size_i!(for isize i8 i16 i32 i64);
-
 
 #[test]
 fn test_sizes() {
@@ -323,8 +321,5 @@ fn test_sizes() {
         (-5500).file_size(&semi_custom_options7).unwrap(),
         "-5.50 KB"
     );
-    assert_eq!(
-        (5500).file_size(&semi_custom_options7).unwrap(),
-        "5.50 KB"
-    );
+    assert_eq!((5500).file_size(&semi_custom_options7).unwrap(), "5.50 KB");
 }

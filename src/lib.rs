@@ -44,8 +44,7 @@ static SCALE_DECIMAL_LONG: [&str; 9] = [
     "Yottabytes",
 ];
 
-static SCALE_BINARY: [&str; 9] =
-    ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+static SCALE_BINARY: [&str; 9] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 static SCALE_BINARY_LONG: [&str; 9] = [
     "Bytes",
     "Kibibytes",
@@ -179,7 +178,6 @@ pub trait FileSize {
 fn f64_eq(left: f64, right: f64) -> bool {
     left == right || (left - right).abs() <= std::f64::EPSILON
 }
-
 
 use self::file_size_opts::*;
 

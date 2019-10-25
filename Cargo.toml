@@ -1,6 +1,6 @@
 [package]
 name = "humansize"
-version = "1.1.0"
+version = "1.1.1"
 authors = ["Leopold Arkham <leopold.arkham@gmail.com>"]
 description = "A configurable crate to easily represent file sizes in a human-readable format."
 repository = "https://github.com/LeopoldArkham/humansize"

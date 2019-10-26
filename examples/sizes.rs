@@ -1,6 +1,6 @@
 extern crate humansize;
 //Import the trait and the options module
-use humansize::{FileSize, file_size_opts};
+use humansize::{file_size_opts, FileSize};
 
 fn main() {
     // Call the file_size method on any non-negative integer with the option set you require

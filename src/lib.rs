@@ -31,31 +31,7 @@
 //! If you wish to customize the way sizes are displayed, you may create your own custom `FileSizeOpts` struct
 //! and pass that to the method. See the `custom_options.rs` file in the example folder.
 
-static SCALE_DECIMAL: [&str; 9] = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-static SCALE_DECIMAL_LONG: [&str; 9] = [
-    "Bytes",
-    "Kilobytes",
-    "Megabytes",
-    "Gigabytes",
-    "Terabytes",
-    "Petabytes",
-    "Exabytes",
-    "Zettabytes",
-    "Yottabytes",
-];
-
-static SCALE_BINARY: [&str; 9] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-static SCALE_BINARY_LONG: [&str; 9] = [
-    "Bytes",
-    "Kibibytes",
-    "Mebibytes",
-    "Gibibytes",
-    "Tebibytes",
-    "Pebibytes",
-    "Exbibytes",
-    "Zebibytes",
-    "Yobibytes",
-];
+mod scales;
 
 pub mod file_size_opts {
     //! Describes the struct that holds the options needed by the `file_size` method.
@@ -227,10 +203,10 @@ macro_rules! impl_file_size_u {
                 }
 
                 let mut scale = match (opts.units, opts.long_units) {
-                    (Kilo::Decimal, false) => SCALE_DECIMAL[scale_idx],
-                    (Kilo::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
-                    (Kilo::Binary, false) => SCALE_BINARY[scale_idx],
-                    (Kilo::Binary, true) => SCALE_BINARY_LONG[scale_idx]
+                    (Kilo::Decimal, false) => scales::SCALE_DECIMAL[scale_idx],
+                    (Kilo::Decimal, true) => scales::SCALE_DECIMAL_LONG[scale_idx],
+                    (Kilo::Binary, false) => scales::SCALE_BINARY[scale_idx],
+                    (Kilo::Binary, true) => scales::SCALE_BINARY_LONG[scale_idx]
                 };
 
                 // Remove "s" from the scale if the size is 1.x

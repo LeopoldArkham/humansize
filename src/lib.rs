@@ -31,26 +31,8 @@
 //! If you wish to customize the way sizes are displayed, you may create your own custom `FileSizeOpts` struct
 //! and pass that to the method. See the `custom_options.rs` file in the example folder.
 
-<<<<<<< HEAD
-
-static SCALE_DECIMAL: [&'static str; 9] = [
-    "B",
-    "KB",
-    "MB",
-    "GB",
-    "TB",
-    "PB",
-    "EB",
-    "ZB",
-    "YB",
-];
-
-
-static SCALE_DECIMAL_LONG: [&'static str; 9] = [
-=======
 static SCALE_DECIMAL: [&str; 9] = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 static SCALE_DECIMAL_LONG: [&str; 9] = [
->>>>>>> master
     "Bytes",
     "Kilobytes",
     "Megabytes",
@@ -62,26 +44,8 @@ static SCALE_DECIMAL_LONG: [&str; 9] = [
     "Yottabytes",
 ];
 
-<<<<<<< HEAD
-
-static SCALE_BINARY: [&'static str; 9] =[
-    "B",
-    "KiB",
-    "MiB",
-    "GiB",
-    "TiB",
-    "PiB",
-    "EiB",
-    "ZiB",
-    "YiB",
-];
-
-
-static SCALE_BINARY_LONG: [&'static str; 9] = [
-=======
 static SCALE_BINARY: [&str; 9] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 static SCALE_BINARY_LONG: [&str; 9] = [
->>>>>>> master
     "Bytes",
     "Kibibytes",
     "Mebibytes",
@@ -227,12 +191,9 @@ pub trait FileSize {
     fn file_size<T: AsRef<FileSizeOpts>>(&self, opts: T) -> Result<String, String>;
 }
 
-<<<<<<< HEAD
-=======
 fn f64_eq(left: f64, right: f64) -> bool {
     left == right || (left - right).abs() <= std::f64::EPSILON
 }
->>>>>>> master
 
 use self::file_size_opts::*;
 
@@ -273,28 +234,15 @@ macro_rules! impl_file_size_u {
                 };
 
                 // Remove "s" from the scale if the size is 1.x
-<<<<<<< HEAD
-                if opts.long_units && size.trunc() == 1.0 { scale = &scale[0 .. scale.len()-1];}
-                
-                let places = if size.fract() == 0.0 {
-=======
                 if opts.long_units && f64_eq(size.trunc(), 1.0) { scale = &scale[0 .. scale.len()-1]; }
 
                 let places = if f64_eq(size.fract(), 0.0) {
->>>>>>> master
                     opts.decimal_zeroes
                 } else {
                     opts.decimal_places
                 };
 
-<<<<<<< HEAD
-                let space = match opts.space {
-                    true => " ",
-                    false => ""
-                };
-=======
                 let space = if opts.space {" "} else {""};
->>>>>>> master
 
                 Ok(format!("{:.*}{}{}{}", places, size, space, scale, opts.suffix))
             }
@@ -308,11 +256,7 @@ macro_rules! impl_file_size_i {
         impl FileSize for $t {
             fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, String> {
                 let opts = _opts.as_ref();
-<<<<<<< HEAD
-                if *self < 0 && !opts.allow_negative { 
-=======
                 if *self < 0 && !opts.allow_negative {
->>>>>>> master
                     return Err("Tried calling file_size on a negative value".to_owned());
                 } else {
                     let sign = if *self < 0 {

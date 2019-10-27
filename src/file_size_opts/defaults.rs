@@ -1,4 +1,4 @@
-use file_size_opts::{
+use crate::file_size_opts::{
   FileSizeOpts,
   Kilo,
   FixedAt,

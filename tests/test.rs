@@ -1,5 +1,6 @@
-use humansize::{file_size_opts, FileSize};
+use humansize::{file_size_opts::{self, BINARY, DECIMAL, CONVENTIONAL}, FileSize};
 
+#[test]
 fn test_sizes() {
 
     assert_eq!(0.file_size(BINARY).unwrap(), "0 B");

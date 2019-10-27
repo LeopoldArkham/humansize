@@ -15,7 +15,6 @@
 //! provided by the options module.
 //!
 //! ```rust
-//! extern crate humansize;
 //! use humansize::{FileSize, file_size_opts as options};
 //!
 //! fn main() {

@@ -34,7 +34,7 @@ mod scales;
 pub mod file_size_opts;
 
 
-/// The trait for the `file_size`method
+/// The trait for the `file_size` method
 pub trait FileSize {
     /// Formats self according to the parameters in `opts`. `opts` can either be one of the
     /// three defaults providedby the `file_size_opts` module, or be custom-defined according

@@ -66,3 +66,97 @@ fn test_sizes() {
     );
     assert_eq!((5500).file_size(&semi_custom_options7).unwrap(), "5.50 KB");
 }
+
+
+#[test]
+fn use_custom_option_struct_twice() {
+    let options = file_size_opts::FileSizeOpts {
+        long_units: true,
+        ..file_size_opts::DECIMAL
+    };
+
+    assert_eq!(
+        1500.file_size(&options).unwrap(),
+        "1.50 Kilobyte",
+    );
+
+    assert_eq!(
+        2500.file_size(&options).unwrap(),
+        "2.50 Kilobytes",
+    );
+}
+
+
+#[test]
+fn pluralization_works() {
+    let options = file_size_opts::FileSizeOpts {
+        long_units: true,
+        decimal_zeroes: 2,
+        ..file_size_opts::DECIMAL
+    };
+
+    assert_eq!(
+        1.file_size(&options).unwrap(),
+        "1.00 Byte",
+    );
+
+    assert_eq!(
+        1000.file_size(&options).unwrap(),
+        "1.00 Kilobyte",
+    );
+
+    assert_eq!(
+        1000000.file_size(&options).unwrap(),
+        "1.00 Megabyte",
+    );
+
+    assert_eq!(
+        1000000000.file_size(&options).unwrap(),
+        "1.00 Gigabyte",
+    );
+
+    assert_eq!(
+        1000000000000_i64.file_size(&options).unwrap(),
+        "1.00 Terabyte",
+    );
+
+    assert_eq!(
+        1000000000000000_i64.file_size(&options).unwrap(),
+        "1.00 Petabyte",
+    );
+
+    assert_eq!(
+        1000000000000000000_i64.file_size(&options).unwrap(),
+        "1.00 Exabyte",
+    );
+}
+
+
+#[test]
+fn max_value_decimal() {
+    let options = file_size_opts::FileSizeOpts {
+        long_units: true,
+        decimal_places: 7,
+        ..file_size_opts::DECIMAL
+    };
+
+    assert_eq!(
+        (std::u64::MAX).file_size(&options).unwrap(),
+        "18.4467441 Exabytes",
+    );
+}
+
+
+#[test]
+fn max_value_binary() {
+    let options = file_size_opts::FileSizeOpts {
+        long_units: true,
+        decimal_places: 7,
+        ..file_size_opts::BINARY
+    };
+
+    assert_eq!(
+        (std::u64::MAX).file_size(&options).unwrap(),
+        "16 Exbibytes",
+    );
+}

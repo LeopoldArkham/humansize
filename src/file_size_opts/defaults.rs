@@ -1,9 +1,4 @@
-use crate::file_size_opts::{
-  FileSizeOpts,
-  Kilo,
-  FixedAt,
-};
-
+use crate::file_size_opts::{FileSizeOpts, FixedAt, Kilo};
 
 /// Options to display sizes in the binary format.
 pub const BINARY: FileSizeOpts = FileSizeOpts {
@@ -18,7 +13,6 @@ pub const BINARY: FileSizeOpts = FileSizeOpts {
     allow_negative: false,
 };
 
-
 /// Options to display sizes in the decimal format.
 pub const DECIMAL: FileSizeOpts = FileSizeOpts {
     divider: Kilo::Decimal,
@@ -31,7 +25,6 @@ pub const DECIMAL: FileSizeOpts = FileSizeOpts {
     suffix: "",
     allow_negative: false,
 };
-
 
 /// Options to display sizes in the "conventional" format.
 /// This 1024 as the value of the `Kilo`, but displays decimal-style units (`KB`, not `KiB`).

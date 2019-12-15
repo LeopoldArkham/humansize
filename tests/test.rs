@@ -1,8 +1,10 @@
-use humansize::{file_size_opts::{self, BINARY, DECIMAL, CONVENTIONAL}, FileSize};
+use humansize::{
+    file_size_opts::{self, BINARY, CONVENTIONAL, DECIMAL},
+    FileSize,
+};
 
 #[test]
 fn test_sizes() {
-
     assert_eq!(0.file_size(BINARY).unwrap(), "0 B");
     assert_eq!(999.file_size(BINARY).unwrap(), "999 B");
     assert_eq!(1000.file_size(BINARY).unwrap(), "1000 B");
@@ -67,7 +69,6 @@ fn test_sizes() {
     assert_eq!((5500).file_size(&semi_custom_options7).unwrap(), "5.50 KB");
 }
 
-
 #[test]
 fn use_custom_option_struct_twice() {
     let options = file_size_opts::FileSizeOpts {
@@ -75,17 +76,10 @@ fn use_custom_option_struct_twice() {
         ..file_size_opts::DECIMAL
     };
 
-    assert_eq!(
-        1500.file_size(&options).unwrap(),
-        "1.50 Kilobyte",
-    );
+    assert_eq!(1500.file_size(&options).unwrap(), "1.50 Kilobyte",);
 
-    assert_eq!(
-        2500.file_size(&options).unwrap(),
-        "2.50 Kilobytes",
-    );
+    assert_eq!(2500.file_size(&options).unwrap(), "2.50 Kilobytes",);
 }
-
 
 #[test]
 fn pluralization_works() {
@@ -95,25 +89,13 @@ fn pluralization_works() {
         ..file_size_opts::DECIMAL
     };
 
-    assert_eq!(
-        1.file_size(&options).unwrap(),
-        "1.00 Byte",
-    );
+    assert_eq!(1.file_size(&options).unwrap(), "1.00 Byte",);
 
-    assert_eq!(
-        1000.file_size(&options).unwrap(),
-        "1.00 Kilobyte",
-    );
+    assert_eq!(1000.file_size(&options).unwrap(), "1.00 Kilobyte",);
 
-    assert_eq!(
-        1000000.file_size(&options).unwrap(),
-        "1.00 Megabyte",
-    );
+    assert_eq!(1000000.file_size(&options).unwrap(), "1.00 Megabyte",);
 
-    assert_eq!(
-        1000000000.file_size(&options).unwrap(),
-        "1.00 Gigabyte",
-    );
+    assert_eq!(1000000000.file_size(&options).unwrap(), "1.00 Gigabyte",);
 
     assert_eq!(
         1000000000000_i64.file_size(&options).unwrap(),
@@ -131,7 +113,6 @@ fn pluralization_works() {
     );
 }
 
-
 #[test]
 fn max_value_decimal() {
     let options = file_size_opts::FileSizeOpts {
@@ -146,7 +127,6 @@ fn max_value_decimal() {
     );
 }
 
-
 #[test]
 fn max_value_binary() {
     let options = file_size_opts::FileSizeOpts {
@@ -155,8 +135,5 @@ fn max_value_binary() {
         ..file_size_opts::BINARY
     };
 
-    assert_eq!(
-        (std::u64::MAX).file_size(&options).unwrap(),
-        "16 Exbibytes",
-    );
+    assert_eq!((std::u64::MAX).file_size(&options).unwrap(), "16 Exbibytes",);
 }

@@ -1,12 +1,9 @@
-
 //! Describes the struct that holds the options needed by the `file_size` method.
 //! The three most common formats are provided as constants to be used easily
 
 pub mod defaults;
 
 pub use self::defaults::*;
-
-
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 /// Holds the standard to use when displying the size.
@@ -16,7 +13,6 @@ pub enum Kilo {
     /// The binary scale and units
     Binary,
 }
-
 
 #[derive(Debug, Copy, Clone)]
 /// Forces a certain representation of the resulting file size.
@@ -32,7 +28,6 @@ pub enum FixedAt {
     Yotta,
     No,
 }
-
 
 /// Holds the options for the `file_size` method.
 #[derive(Debug)]
@@ -64,7 +59,6 @@ pub struct FileSizeOpts {
     /// Whether to allow negative numbers as input. If `False`, negative values will return an error.
     pub allow_negative: bool,
 }
-
 
 impl AsRef<FileSizeOpts> for FileSizeOpts {
     fn as_ref(&self) -> &FileSizeOpts {

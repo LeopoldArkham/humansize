@@ -30,9 +30,8 @@
 //! If you wish to customize the way sizes are displayed, you may create your own custom `FileSizeOpts` struct
 //! and pass that to the method. See the `custom_options.rs` file in the example folder.
 
-mod scales;
 pub mod file_size_opts;
-
+mod scales;
 
 /// The trait for the `file_size` method
 pub trait FileSize {
@@ -60,7 +59,6 @@ fn f64_eq(left: f64, right: f64) -> bool {
 }
 
 use self::file_size_opts::*;
-
 
 macro_rules! impl_file_size_u {
     (for $($t:ty)*) => ($(
@@ -114,7 +112,6 @@ macro_rules! impl_file_size_u {
     )*)
 }
 
-
 macro_rules! impl_file_size_i {
     (for $($t:ty)*) => ($(
         impl FileSize for $t {
@@ -136,7 +133,6 @@ macro_rules! impl_file_size_i {
         }
     )*)
 }
-
 
 impl_file_size_u!(for usize u8 u16 u32 u64);
 impl_file_size_i!(for isize i8 i16 i32 i64);

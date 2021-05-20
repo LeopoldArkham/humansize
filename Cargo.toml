@@ -7,7 +7,7 @@ description = "A configurable crate to easily represent file sizes in a human-re
 repository = "https://github.com/LeopoldArkham/humansize"
 homepage = "https://github.com/LeopoldArkham/humansize"
 documentation = "https://docs.rs/humansize"
-keywords = ["file", "size", "sizes", "humanize", "bytes", "file size", "size formatting"]
+keywords = ["size", "formatting", "humanize", "file-size", "size-format"]
 categories = ["value-formatting"]
 license = "MIT/Apache-2.0"
 

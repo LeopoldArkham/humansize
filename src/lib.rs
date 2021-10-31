@@ -98,7 +98,7 @@ pub mod file_size_opts {
         pub decimal_zeroes: usize,
         /// Whether to force a certain representation and if so, which one.
         pub fixed_at: FixedAt,
-        /// Whether to use the full suffix or its abbreveation.
+        /// Whether to use the full suffix or its abbreviation.
         pub long_units: bool,
         /// Whether to place a space between value and units.
         pub space: bool,

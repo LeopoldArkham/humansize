@@ -16,15 +16,15 @@
 //!
 //! ```rust
 //! extern crate humansize;
-//! use humansize::{FileSize, file_size_opts as options};
+//! use humansize::FileSize;
 //!
 //! fn main() {
 //! 	let size = 1000;
-//! 	println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
+//! 	println!("Size is {}", size.file_size(humansize::DECIMAL).unwrap());
 //!
-//! 	println!("Size is {}", size.file_size(options::BINARY).unwrap());
+//! 	println!("Size is {}", size.file_size(humansize::BINARY).unwrap());
 //!
-//! 	println!("Size is {}", size.file_size(options::CONVENTIONAL).unwrap());
+//! 	println!("Size is {}", size.file_size(humansize::CONVENTIONAL).unwrap());
 //! }
 //! ```
 //!
@@ -156,9 +156,9 @@ pub mod file_size_opts {
 }
 /// The trait for the `file_size`method
 pub trait FileSize {
-    /// Formats self according to the parameters in `opts`. `opts` can either be one of the
-    /// three defaults providedby the `file_size_opts` module, or be custom-defined according
-    /// to your needs
+    /// Formats self according to the parameters in `opts`. `opts` can either be one of the three
+    /// default `FileSizeOpts` (`BINARY`, `DECIMAL`, or `CONVENTIONAL`), or be custom-defined
+    /// according to your needs.
     ///
     /// # Errors
     /// Will fail by default if called on a negative number. Override this behavior by setting
@@ -166,10 +166,10 @@ pub trait FileSize {
     ///
     /// # Examples
     /// ```rust
-    /// use humansize::{FileSize, file_size_opts as options};
+    /// use humansize::{DECIMAL, FileSize};
     ///
     /// let size = 5128;
-    /// println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
+    /// println!("Size is {}", size.file_size(DECIMAL).unwrap());
     /// ```
     ///
     fn file_size<T: AsRef<FileSizeOpts>>(&self, opts: T) -> Result<String, String>;
@@ -179,7 +179,8 @@ fn f64_eq(left: f64, right: f64) -> bool {
     left == right || (left - right).abs() <= std::f64::EPSILON
 }
 
-use self::file_size_opts::*;
+pub use self::file_size_opts::{FileSizeOpts, BINARY, CONVENTIONAL, DECIMAL};
+use self::file_size_opts::{FixedAt, Kilo};
 
 macro_rules! impl_file_size_u {
     (for $($t:ty)*) => ($(
@@ -269,53 +270,53 @@ fn test_sizes() {
     assert_eq!(1024.file_size(BINARY).unwrap(), "1 KiB");
     assert_eq!(1024.file_size(CONVENTIONAL).unwrap(), "1 KB");
 
-    let semi_custom_options = file_size_opts::FileSizeOpts {
+    let semi_custom_options = FileSizeOpts {
         space: false,
-        ..file_size_opts::DECIMAL
+        ..DECIMAL
     };
     assert_eq!(1000.file_size(semi_custom_options).unwrap(), "1KB");
 
-    let semi_custom_options2 = file_size_opts::FileSizeOpts {
+    let semi_custom_options2 = FileSizeOpts {
         suffix: "/s",
-        ..file_size_opts::BINARY
+        ..BINARY
     };
     assert_eq!(999.file_size(semi_custom_options2).unwrap(), "999 B/s");
 
-    let semi_custom_options3 = file_size_opts::FileSizeOpts {
+    let semi_custom_options3 = FileSizeOpts {
         suffix: "/day",
         space: false,
-        ..file_size_opts::DECIMAL
+        ..DECIMAL
     };
     assert_eq!(1000.file_size(semi_custom_options3).unwrap(), "1KB/day");
 
-    let semi_custom_options4 = file_size_opts::FileSizeOpts {
-        fixed_at: file_size_opts::FixedAt::Byte,
-        ..file_size_opts::BINARY
+    let semi_custom_options4 = FileSizeOpts {
+        fixed_at: FixedAt::Byte,
+        ..BINARY
     };
     assert_eq!(2048.file_size(semi_custom_options4).unwrap(), "2048 B");
 
-    let semi_custom_options5 = file_size_opts::FileSizeOpts {
-        fixed_at: file_size_opts::FixedAt::Kilo,
-        ..file_size_opts::BINARY
+    let semi_custom_options5 = FileSizeOpts {
+        fixed_at: FixedAt::Kilo,
+        ..BINARY
     };
     assert_eq!(
         16584975.file_size(semi_custom_options5).unwrap(),
         "16196.26 KiB"
     );
 
-    let semi_custom_options6 = file_size_opts::FileSizeOpts {
-        fixed_at: file_size_opts::FixedAt::Tera,
+    let semi_custom_options6 = FileSizeOpts {
+        fixed_at: FixedAt::Tera,
         decimal_places: 10,
-        ..file_size_opts::BINARY
+        ..BINARY
     };
     assert_eq!(
         15284975.file_size(semi_custom_options6).unwrap(),
         "0.0000139016 TiB"
     );
 
-    let semi_custom_options7 = file_size_opts::FileSizeOpts {
+    let semi_custom_options7 = FileSizeOpts {
         allow_negative: true,
-        ..file_size_opts::DECIMAL
+        ..DECIMAL
     };
     assert_eq!(
         (-5500).file_size(&semi_custom_options7).unwrap(),

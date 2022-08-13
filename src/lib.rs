@@ -15,7 +15,6 @@
 //! provided by the options module.
 //!
 //! ```rust
-//! extern crate humansize;
 //! use humansize::{FileSize, file_size_opts as options};
 //!
 //! fn main() {
@@ -31,18 +30,8 @@
 //! If you wish to customize the way sizes are displayed, you may create your own custom `FileSizeOpts` struct
 //! and pass that to the method. See the `custom_options.rs` file in the example folder.
 
-static SCALE_DECIMAL: [&str; 9] = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-static SCALE_DECIMAL_LONG: [&str; 9] = [
-    "Bytes",
-    "Kilobytes",
-    "Megabytes",
-    "Gigabytes",
-    "Terabytes",
-    "Petabytes",
-    "Exabytes",
-    "Zettabytes",
-    "Yottabytes",
-];
+pub mod file_size_opts;
+mod scales;
 
 static SCALE_BINARY: [&str; 9] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 static SCALE_BINARY_LONG: [&str; 9] = [
@@ -154,6 +143,7 @@ pub mod file_size_opts {
         allow_negative: false,
     };
 }
+
 /// The trait for the `file_size`method
 pub trait FileSize {
     /// Formats self according to the parameters in `opts`. `opts` can either be one of the
@@ -210,10 +200,10 @@ macro_rules! impl_file_size_u {
                 }
 
                 let mut scale = match (opts.units, opts.long_units) {
-                    (Kilo::Decimal, false) => SCALE_DECIMAL[scale_idx],
-                    (Kilo::Decimal, true) => SCALE_DECIMAL_LONG[scale_idx],
-                    (Kilo::Binary, false) => SCALE_BINARY[scale_idx],
-                    (Kilo::Binary, true) => SCALE_BINARY_LONG[scale_idx]
+                    (Kilo::Decimal, false) => scales::SCALE_DECIMAL[scale_idx],
+                    (Kilo::Decimal, true) => scales::SCALE_DECIMAL_LONG[scale_idx],
+                    (Kilo::Binary, false) => scales::SCALE_BINARY[scale_idx],
+                    (Kilo::Binary, true) => scales::SCALE_BINARY_LONG[scale_idx]
                 };
 
                 // Remove "s" from the scale if the size is 1.x
@@ -257,69 +247,3 @@ macro_rules! impl_file_size_i {
 
 impl_file_size_u!(for usize u8 u16 u32 u64);
 impl_file_size_i!(for isize i8 i16 i32 i64);
-
-#[test]
-fn test_sizes() {
-    assert_eq!(0.file_size(BINARY).unwrap(), "0 B");
-    assert_eq!(999.file_size(BINARY).unwrap(), "999 B");
-    assert_eq!(1000.file_size(BINARY).unwrap(), "1000 B");
-    assert_eq!(1000.file_size(DECIMAL).unwrap(), "1 KB");
-    assert_eq!(1023.file_size(BINARY).unwrap(), "1023 B");
-    assert_eq!(1023.file_size(DECIMAL).unwrap(), "1.02 KB");
-    assert_eq!(1024.file_size(BINARY).unwrap(), "1 KiB");
-    assert_eq!(1024.file_size(CONVENTIONAL).unwrap(), "1 KB");
-
-    let semi_custom_options = file_size_opts::FileSizeOpts {
-        space: false,
-        ..file_size_opts::DECIMAL
-    };
-    assert_eq!(1000.file_size(semi_custom_options).unwrap(), "1KB");
-
-    let semi_custom_options2 = file_size_opts::FileSizeOpts {
-        suffix: "/s",
-        ..file_size_opts::BINARY
-    };
-    assert_eq!(999.file_size(semi_custom_options2).unwrap(), "999 B/s");
-
-    let semi_custom_options3 = file_size_opts::FileSizeOpts {
-        suffix: "/day",
-        space: false,
-        ..file_size_opts::DECIMAL
-    };
-    assert_eq!(1000.file_size(semi_custom_options3).unwrap(), "1KB/day");
-
-    let semi_custom_options4 = file_size_opts::FileSizeOpts {
-        fixed_at: file_size_opts::FixedAt::Byte,
-        ..file_size_opts::BINARY
-    };
-    assert_eq!(2048.file_size(semi_custom_options4).unwrap(), "2048 B");
-
-    let semi_custom_options5 = file_size_opts::FileSizeOpts {
-        fixed_at: file_size_opts::FixedAt::Kilo,
-        ..file_size_opts::BINARY
-    };
-    assert_eq!(
-        16584975.file_size(semi_custom_options5).unwrap(),
-        "16196.26 KiB"
-    );
-
-    let semi_custom_options6 = file_size_opts::FileSizeOpts {
-        fixed_at: file_size_opts::FixedAt::Tera,
-        decimal_places: 10,
-        ..file_size_opts::BINARY
-    };
-    assert_eq!(
-        15284975.file_size(semi_custom_options6).unwrap(),
-        "0.0000139016 TiB"
-    );
-
-    let semi_custom_options7 = file_size_opts::FileSizeOpts {
-        allow_negative: true,
-        ..file_size_opts::DECIMAL
-    };
-    assert_eq!(
-        (-5500).file_size(&semi_custom_options7).unwrap(),
-        "-5.50 KB"
-    );
-    assert_eq!((5500).file_size(&semi_custom_options7).unwrap(), "5.50 KB");
-}

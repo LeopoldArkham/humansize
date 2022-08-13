@@ -15,15 +15,16 @@
 //! provided by the options module.
 //!
 //! ```rust
-//! use humansize::{FileSize, file_size_opts as options};
+//! extern crate humansize;
+//! use humansize::FileSize;
 //!
 //! fn main() {
 //! 	let size = 1000;
-//! 	println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
+//! 	println!("Size is {}", size.file_size(humansize::DECIMAL).unwrap());
 //!
-//! 	println!("Size is {}", size.file_size(options::BINARY).unwrap());
+//! 	println!("Size is {}", size.file_size(humansize::BINARY).unwrap());
 //!
-//! 	println!("Size is {}", size.file_size(options::CONVENTIONAL).unwrap());
+//! 	println!("Size is {}", size.file_size(humansize::CONVENTIONAL).unwrap());
 //! }
 //! ```
 //!
@@ -146,9 +147,9 @@ pub mod file_size_opts {
 
 /// The trait for the `file_size`method
 pub trait FileSize {
-    /// Formats self according to the parameters in `opts`. `opts` can either be one of the
-    /// three defaults provided by the `file_size_opts` module, or be custom-defined according
-    /// to your needs
+    /// Formats self according to the parameters in `opts`. `opts` can either be one of the three
+    /// default `FileSizeOpts` (`BINARY`, `DECIMAL`, or `CONVENTIONAL`), or be custom-defined
+    /// according to your needs.
     ///
     /// # Errors
     /// Will fail by default if called on a negative number. Override this behavior by setting
@@ -156,10 +157,10 @@ pub trait FileSize {
     ///
     /// # Examples
     /// ```rust
-    /// use humansize::{FileSize, file_size_opts as options};
+    /// use humansize::{DECIMAL, FileSize};
     ///
     /// let size = 5128;
-    /// println!("Size is {}", size.file_size(options::DECIMAL).unwrap());
+    /// println!("Size is {}", size.file_size(DECIMAL).unwrap());
     /// ```
     ///
     fn file_size<T: AsRef<FileSizeOpts>>(&self, opts: T) -> Result<String, String>;
@@ -169,7 +170,8 @@ fn f64_eq(left: f64, right: f64) -> bool {
     left == right || (left - right).abs() <= std::f64::EPSILON
 }
 
-use self::file_size_opts::*;
+pub use self::file_size_opts::{FileSizeOpts, BINARY, CONVENTIONAL, DECIMAL};
+use self::file_size_opts::{FixedAt, Kilo};
 
 macro_rules! impl_file_size_u {
     (for $($t:ty)*) => ($(

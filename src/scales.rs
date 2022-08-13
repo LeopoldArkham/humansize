@@ -1,4 +1,4 @@
-pub(crate) static SCALE_DECIMAL: [&str; 9] = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+pub(crate) static SCALE_DECIMAL: [&str; 9] = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
 pub(crate) static SCALE_DECIMAL_LONG: [&str; 9] = [
     "Bytes",

@@ -33,8 +33,24 @@ If you wish to customize the way sizes are displayed, you may create your own cu
 and pass that to the method. See the `custom_options.rs` file in the example folder.
 */
 
+use std::error::Error;
+use std::fmt;
+
 pub mod file_size_opts;
 mod scales;
+
+#[derive(Debug)]
+pub struct FileSizeError {
+    number: String,
+}
+
+impl fmt::Display for FileSizeError {
+    fn fmt(&self, f: & mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Called file_size on a negative number ({}), which is not permitted by the current options set. Set `allow_negative` to true in the options to allow this behavior", self.number)
+    }
+}
+
+impl Error for FileSizeError {}
 
 /// The trait for the `file_size`method
 pub trait FileSize {
@@ -54,7 +70,7 @@ pub trait FileSize {
     /// println!("Size is {}", size.file_size(DECIMAL).unwrap());
     /// ```
     ///
-    fn file_size<T: AsRef<FileSizeOpts>>(&self, opts: T) -> Result<String, String>;
+    fn file_size<T: AsRef<FileSizeOpts>>(&self, opts: T) -> Result<String, FileSizeError>;
 }
 
 fn f64_eq(left: f64, right: f64) -> bool {
@@ -67,7 +83,7 @@ use self::file_size_opts::{FixedAt, Kilo};
 macro_rules! impl_file_size_u {
     (for $($t:ty)*) => ($(
         impl FileSize for $t {
-            fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, String> {
+            fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, FileSizeError> {
                 let opts = _opts.as_ref();
                 let divider = match opts.divider {
                     Kilo::Decimal => 1000.0,
@@ -119,10 +135,11 @@ macro_rules! impl_file_size_u {
 macro_rules! impl_file_size_i {
     (for $($t:ty)*) => ($(
         impl FileSize for $t {
-            fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, String> {
+            fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, FileSizeError> {
                 let opts = _opts.as_ref();
                 if *self < 0 && !opts.allow_negative {
-                    return Err("Tried calling file_size on a negative value".to_owned());
+                    // return Err("Tried calling file_size on a negative value".to_owned());
+                    return Err(FileSizeError { number: self.to_string()})
                 } else {
                     let sign = if *self < 0 {
                         "-"

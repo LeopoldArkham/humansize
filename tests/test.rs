@@ -14,32 +14,32 @@ fn test_sizes() {
     assert_eq!(1024.file_size(BINARY).unwrap(), "1 KiB");
     assert_eq!(1024.file_size(CONVENTIONAL).unwrap(), "1 KB");
 
-    let semi_custom_options = file_size_opts::FileSizeOpts {
+    let semi_custom_options = file_size_opts::FormatSizeOptions {
         space: false,
         ..file_size_opts::DECIMAL
     };
     assert_eq!(1000.file_size(semi_custom_options).unwrap(), "1KB");
 
-    let semi_custom_options2 = file_size_opts::FileSizeOpts {
+    let semi_custom_options2 = file_size_opts::FormatSizeOptions {
         suffix: "/s",
         ..file_size_opts::BINARY
     };
     assert_eq!(999.file_size(semi_custom_options2).unwrap(), "999 B/s");
 
-    let semi_custom_options3 = file_size_opts::FileSizeOpts {
+    let semi_custom_options3 = file_size_opts::FormatSizeOptions {
         suffix: "/day",
         space: false,
         ..file_size_opts::DECIMAL
     };
     assert_eq!(1000.file_size(semi_custom_options3).unwrap(), "1KB/day");
 
-    let semi_custom_options4 = file_size_opts::FileSizeOpts {
+    let semi_custom_options4 = file_size_opts::FormatSizeOptions {
         fixed_at: file_size_opts::FixedAt::Byte,
         ..file_size_opts::BINARY
     };
     assert_eq!(2048.file_size(semi_custom_options4).unwrap(), "2048 B");
 
-    let semi_custom_options5 = file_size_opts::FileSizeOpts {
+    let semi_custom_options5 = file_size_opts::FormatSizeOptions {
         fixed_at: file_size_opts::FixedAt::Kilo,
         ..file_size_opts::BINARY
     };
@@ -48,7 +48,7 @@ fn test_sizes() {
         "16196.26 KiB"
     );
 
-    let semi_custom_options6 = file_size_opts::FileSizeOpts {
+    let semi_custom_options6 = file_size_opts::FormatSizeOptions {
         fixed_at: file_size_opts::FixedAt::Tera,
         decimal_places: 10,
         ..file_size_opts::BINARY
@@ -58,7 +58,7 @@ fn test_sizes() {
         "0.0000139016 TiB"
     );
 
-    let semi_custom_options7 = file_size_opts::FileSizeOpts {
+    let semi_custom_options7 = file_size_opts::FormatSizeOptions {
         allow_negative: true,
         ..file_size_opts::DECIMAL
     };
@@ -71,7 +71,7 @@ fn test_sizes() {
 
 #[test]
 fn use_custom_option_struct_twice() {
-    let options = file_size_opts::FileSizeOpts {
+    let options = file_size_opts::FormatSizeOptions {
         long_units: true,
         ..file_size_opts::DECIMAL
     };
@@ -83,7 +83,7 @@ fn use_custom_option_struct_twice() {
 
 #[test]
 fn pluralization_works() {
-    let options = file_size_opts::FileSizeOpts {
+    let options = file_size_opts::FormatSizeOptions {
         long_units: true,
         decimal_zeroes: 2,
         ..file_size_opts::DECIMAL
@@ -115,7 +115,7 @@ fn pluralization_works() {
 
 #[test]
 fn max_value_decimal() {
-    let options = file_size_opts::FileSizeOpts {
+    let options = file_size_opts::FormatSizeOptions {
         long_units: true,
         decimal_places: 7,
         ..file_size_opts::DECIMAL
@@ -129,7 +129,7 @@ fn max_value_decimal() {
 
 #[test]
 fn max_value_binary() {
-    let options = file_size_opts::FileSizeOpts {
+    let options = file_size_opts::FormatSizeOptions {
         long_units: true,
         decimal_places: 7,
         ..file_size_opts::BINARY

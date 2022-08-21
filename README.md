@@ -40,7 +40,7 @@ fn main() {
 }
 ```
 
-If you wish to customize the way sizes are displayed, you may create your own custom `FileSizeOpts` struct
+If you wish to customize the way sizes are displayed, you may create your own custom `FormatSizeOptions` struct
 and pass that to the method. See the `custom_options.rs` file in the example folder.
 
 

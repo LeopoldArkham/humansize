@@ -1,7 +1,7 @@
-use crate::file_size_opts::{FileSizeOpts, FixedAt, Kilo};
+use crate::file_size_opts::{FormatSizeOptions, FixedAt, Kilo};
 
 /// Options to display sizes in the binary format.
-pub const BINARY: FileSizeOpts = FileSizeOpts {
+pub const BINARY: FormatSizeOptions = FormatSizeOptions {
     divider: Kilo::Binary,
     units: Kilo::Binary,
     decimal_places: 2,
@@ -10,11 +10,10 @@ pub const BINARY: FileSizeOpts = FileSizeOpts {
     long_units: false,
     space: true,
     suffix: "",
-    allow_negative: false,
 };
 
 /// Options to display sizes in the decimal format.
-pub const DECIMAL: FileSizeOpts = FileSizeOpts {
+pub const DECIMAL: FormatSizeOptions = FormatSizeOptions {
     divider: Kilo::Decimal,
     units: Kilo::Decimal,
     decimal_places: 2,
@@ -23,12 +22,11 @@ pub const DECIMAL: FileSizeOpts = FileSizeOpts {
     long_units: false,
     space: true,
     suffix: "",
-    allow_negative: false,
 };
 
 /// Options to display sizes in the "conventional" format.
 /// This 1024 as the value of the `Kilo`, but displays decimal-style units (`KB`, not `KiB`).
-pub const CONVENTIONAL: FileSizeOpts = FileSizeOpts {
+pub const CONVENTIONAL: FormatSizeOptions = FormatSizeOptions {
     divider: Kilo::Binary,
     units: Kilo::Decimal,
     decimal_places: 2,
@@ -37,5 +35,4 @@ pub const CONVENTIONAL: FileSizeOpts = FileSizeOpts {
     long_units: false,
     space: true,
     suffix: "",
-    allow_negative: false,
 };

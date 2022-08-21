@@ -3,7 +3,7 @@ use humansize::{file_size_opts as opts, FileSize};
 
 fn main() {
     // Declare a fully custom option struct
-    let custom_options = opts::FileSizeOpts {
+    let custom_options = opts::FormatSizeOptions {
         divider: opts::Kilo::Binary,
         units: opts::Kilo::Decimal,
         decimal_places: 3,
@@ -18,7 +18,7 @@ fn main() {
     println!("{}", 3024.file_size(custom_options).unwrap());
 
     // Or use only some custom parameters and adopt the rest from an existing config
-    let semi_custom_options = opts::FileSizeOpts {
+    let semi_custom_options = opts::FormatSizeOptions {
         decimal_zeroes: 3,
         ..opts::DECIMAL
     };

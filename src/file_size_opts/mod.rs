@@ -6,7 +6,7 @@ pub mod defaults;
 pub use self::defaults::*;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-/// Holds the standard to use when displying the size.
+/// Holds the standard to use when displaying the size.
 pub enum Kilo {
     /// The decimal scale and units
     Decimal,
@@ -31,7 +31,7 @@ pub enum FixedAt {
 
 /// Holds the options for the `file_size` method.
 #[derive(Debug)]
-pub struct FileSizeOpts {
+pub struct FormatSizeOptions {
     /// The scale (binary/decimal) to divide against.
     pub divider: Kilo,
 
@@ -47,7 +47,7 @@ pub struct FileSizeOpts {
     /// Whether to force a certain representation and if so, which one.
     pub fixed_at: FixedAt,
 
-    /// Whether to use the full suffix or its abbreveation.
+    /// Whether to use the full suffix or its abbreviation.
     pub long_units: bool,
 
     /// Whether to place a space between value and units.
@@ -55,13 +55,10 @@ pub struct FileSizeOpts {
 
     /// An optional suffix which will be appended after the unit.
     pub suffix: &'static str,
-
-    /// Whether to allow negative numbers as input. If `False`, negative values will return an error.
-    pub allow_negative: bool,
 }
 
-impl AsRef<FileSizeOpts> for FileSizeOpts {
-    fn as_ref(&self) -> &FileSizeOpts {
+impl AsRef<FormatSizeOptions> for FormatSizeOptions {
+    fn as_ref(&self) -> &FormatSizeOptions {
         self
     }
 }

@@ -29,131 +29,143 @@ fn main() {
 }
 ```
 
-If you wish to customize the way sizes are displayed, you may create your own custom `FileSizeOpts` struct
+If you wish to customize the way sizes are displayed, you may create your own custom `FormatSizeOptions` struct
 and pass that to the method. See the `custom_options.rs` file in the example folder.
 */
-
-use std::error::Error;
-use std::fmt;
-
 pub mod file_size_opts;
 mod scales;
-
-#[derive(Debug)]
-pub struct FileSizeError {
-    number: String,
-}
-
-impl fmt::Display for FileSizeError {
-    fn fmt(&self, f: & mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Called file_size on a negative number ({}), which is not permitted by the current options set. Set `allow_negative` to true in the options to allow this behavior", self.number)
-    }
-}
-
-impl Error for FileSizeError {}
-
-/// The trait for the `file_size`method
-pub trait FileSize {
-    /// Formats self according to the parameters in `opts`. `opts` can either be one of the three
-    /// default `FileSizeOpts` (`BINARY`, `DECIMAL`, or `CONVENTIONAL`), or be custom-defined
-    /// according to your needs.
-    ///
-    /// # Errors
-    /// Will fail by default if called on a negative number. Override this behavior by setting
-    /// `allow_negative` to `True` in a custom options struct.
-    ///
-    /// # Examples
-    /// ```rust
-    /// use humansize::{DECIMAL, FileSize};
-    ///
-    /// let size = 5128;
-    /// println!("Size is {}", size.file_size(DECIMAL).unwrap());
-    /// ```
-    ///
-    fn file_size<T: AsRef<FileSizeOpts>>(&self, opts: T) -> Result<String, FileSizeError>;
-}
 
 fn f64_eq(left: f64, right: f64) -> bool {
     left == right || (left - right).abs() <= std::f64::EPSILON
 }
 
-pub use self::file_size_opts::{FileSizeOpts, BINARY, CONVENTIONAL, DECIMAL};
+pub use self::file_size_opts::{FormatSizeOptions, BINARY, CONVENTIONAL, DECIMAL};
 use self::file_size_opts::{FixedAt, Kilo};
 
-macro_rules! impl_file_size_u {
-    (for $($t:ty)*) => ($(
-        impl FileSize for $t {
-            fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, FileSizeError> {
-                let opts = _opts.as_ref();
-                let divider = match opts.divider {
-                    Kilo::Decimal => 1000.0,
-                    Kilo::Binary => 1024.0
-                };
-
-                let mut size: f64 = *self as f64;
-                let mut scale_idx = 0;
-
-                match opts.fixed_at {
-                    FixedAt::No => {
-                        while size >= divider {
-                            size /= divider;
-                            scale_idx += 1;
-                        }
-                    }
-                    val => {
-                        while scale_idx != val as usize {
-                            size /= divider;
-                            scale_idx += 1;
-                        }
-                    }
-                }
-
-                let mut scale = match (opts.units, opts.long_units) {
-                    (Kilo::Decimal, false) => scales::SCALE_DECIMAL[scale_idx],
-                    (Kilo::Decimal, true) => scales::SCALE_DECIMAL_LONG[scale_idx],
-                    (Kilo::Binary, false) => scales::SCALE_BINARY[scale_idx],
-                    (Kilo::Binary, true) => scales::SCALE_BINARY_LONG[scale_idx]
-                };
-
-                // Remove "s" from the scale if the size is 1.x
-                if opts.long_units && f64_eq(size.trunc(), 1.0) { scale = &scale[0 .. scale.len()-1]; }
-
-                let places = if f64_eq(size.fract(), 0.0) {
-                    opts.decimal_zeroes
-                } else {
-                    opts.decimal_places
-                };
-
-                let space = if opts.space {" "} else {""};
-
-                Ok(format!("{:.*}{}{}{}", places, size, space, scale, opts.suffix))
-            }
-        }
-    )*)
+pub trait ToF64 {
+    fn to_f64(&self) -> f64;
 }
 
-macro_rules! impl_file_size_i {
-    (for $($t:ty)*) => ($(
-        impl FileSize for $t {
-            fn file_size<T: AsRef<FileSizeOpts>>(&self, _opts: T) -> Result<String, FileSizeError> {
-                let opts = _opts.as_ref();
-                if *self < 0 && !opts.allow_negative {
-                    // return Err("Tried calling file_size on a negative value".to_owned());
-                    return Err(FileSizeError { number: self.to_string()})
-                } else {
-                    let sign = if *self < 0 {
-                        "-"
-                    } else {
-                        ""
-                    };
+pub trait Unsigned {}
 
-                    Ok(format!("{}{}", sign, (self.abs() as u64).file_size(opts)?))
-                }
+impl Unsigned for usize {}
+impl Unsigned for u8 {}
+impl Unsigned for u16 {}
+impl Unsigned for u32 {}
+impl Unsigned for u64 {}
 
-            }
-        }
-    )*)
+impl ToF64 for usize {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+impl ToF64 for u8 {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+impl ToF64 for u16 {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
 }
 
-impl_file_size_u!(for usize u8 u16 u32 u64);
-impl_file_size_i!(for isize i8 i16 i32 i64);
+impl ToF64 for u32 {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+
+impl ToF64 for u64 {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+
+impl ToF64 for isize {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+impl ToF64 for i8 {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+impl ToF64 for i16 {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+
+impl ToF64 for i32 {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+
+impl ToF64 for i64 {
+    fn to_f64(&self) -> f64 {
+        *self as f64
+    }
+}
+
+pub fn format_size_i(input: impl ToF64, _options: impl AsRef<FormatSizeOptions>) -> String {
+    let opts = _options.as_ref();
+    let divider = match opts.divider {
+        Kilo::Decimal => 1000.0,
+        Kilo::Binary => 1024.0,
+    };
+
+    let mut size: f64 = input.to_f64();
+    let mut scale_idx = 0;
+
+    match opts.fixed_at {
+        FixedAt::No => {
+            while size >= divider {
+                size /= divider;
+                scale_idx += 1;
+            }
+        }
+        val => {
+            while scale_idx != val as usize {
+                size /= divider;
+                scale_idx += 1;
+            }
+        }
+    }
+
+    let mut scale = match (opts.units, opts.long_units) {
+        (Kilo::Decimal, false) => scales::SCALE_DECIMAL[scale_idx],
+        (Kilo::Decimal, true) => scales::SCALE_DECIMAL_LONG[scale_idx],
+        (Kilo::Binary, false) => scales::SCALE_BINARY[scale_idx],
+        (Kilo::Binary, true) => scales::SCALE_BINARY_LONG[scale_idx]
+    };
+
+    // Remove "s" from the scale if the size is 1.x
+    if opts.long_units && f64_eq(size.trunc(), 1.0) { scale = &scale[0 .. scale.len()-1]; }
+
+    let places = if f64_eq(size.fract(), 0.0) {
+        opts.decimal_zeroes
+    } else {
+        opts.decimal_places
+    };
+
+    let space = if opts.space {" "} else {""};
+
+    format!("{:.*}{}{}{}", places, size, space, scale, opts.suffix)
+}
+
+pub fn format_size(input: impl ToF64 + Unsigned, _options: impl AsRef<FormatSizeOptions>) -> String {
+    format_size_i(input, _options)
+}
+
+pub struct SizeFormatter {
+    options: FormatSizeOptions
+}
+
+impl SizeFormatter {
+    pub fn format(&self, number: impl ToF64) -> String {
+        format_size_i(number, &self.options)
+    }
+}

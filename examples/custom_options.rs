@@ -1,5 +1,5 @@
 extern crate humansize;
-use humansize::{file_size_opts as opts, FileSize};
+use humansize::{options as opts, FileSize};
 
 fn main() {
     // Declare a fully custom option struct

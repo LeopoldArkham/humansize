@@ -2,7 +2,7 @@
 name = "humansize"
 version = "1.1.1"
 authors = ["Leopold Arkham <leopold.arkham@gmail.com>"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 description = "A configurable crate to easily represent file sizes in a human-readable format."
 repository = "https://github.com/LeopoldArkham/humansize"
@@ -12,4 +12,8 @@ keywords = ["file", "size", "sizes", "humanize", "bytes", "file size", "size for
 categories = ["value-formatting"]
 license = "MIT/Apache-2.0"
 
-[dependencies] 
+[features]
+no_alloc = []
+
+[dependencies]
+libm = "0.2.5"

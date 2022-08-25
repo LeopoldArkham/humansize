@@ -14,6 +14,7 @@ fn main() {
         suffix: "",
         allow_negative: true,
     };
+    
     // Then use it
     println!("{}", 3024.file_size(custom_options).unwrap());
 

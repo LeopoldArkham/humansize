@@ -1,0 +1,7 @@
+[package]
+name = "no_alloc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+humansize = { path = "../..", features = ["no_alloc"] }

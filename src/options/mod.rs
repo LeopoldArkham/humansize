@@ -4,7 +4,7 @@
 mod defaults;
 pub use self::defaults::*;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 /// Holds the standard to use when displaying the size.
 pub enum Kilo {
     /// The decimal scale and units. SI standard.

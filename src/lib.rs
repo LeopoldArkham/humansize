@@ -65,7 +65,7 @@ pub struct IFormatter<T: ToF64, O: AsRef<FormatSizeOptions>> {
 
 impl<V: ToF64, O: AsRef<FormatSizeOptions>> IFormatter<V, O> {
     pub fn new(value: V, options: O) -> Self {
-        IFormatter{value: value, options}
+        IFormatter{value, options}
     }
 }
 

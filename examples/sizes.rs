@@ -8,6 +8,6 @@ fn main() {
     println!("{}", format_size(5456usize, BINARY));
     println!("{}", format_size(1024usize, BINARY));
     println!("{}", format_size(1000usize, DECIMAL));
-    println!("{}", format_size(1023_654_123_654u64, DECIMAL));
+    println!("{}", format_size(1_023_654_123_654_u64, DECIMAL));
     println!("{}", format_size(123456789usize, CONVENTIONAL));
 }

@@ -1,28 +1,27 @@
 extern crate humansize;
-use humansize::{options as opts, FileSize};
+use humansize::{format_size, format_size_i, FormatSizeOptions, Kilo, FixedAt, DECIMAL};
 
 fn main() {
     // Declare a fully custom option struct
-    let custom_options = opts::FormatSizeOptions {
-        divider: opts::Kilo::Binary,
-        units: opts::Kilo::Decimal,
+    let custom_options = FormatSizeOptions {
+        kilo: Kilo::Binary,
+        units: Kilo::Decimal,
         decimal_places: 3,
         decimal_zeroes: 1,
-        fixed_at: opts::FixedAt::No,
+        fixed_at: FixedAt::No,
         long_units: true,
         space: false,
         suffix: "",
-        allow_negative: true,
     };
-    
+
     // Then use it
-    println!("{}", 3024.file_size(custom_options).unwrap());
+    println!("{}", format_size(3024usize, custom_options));
 
     // Or use only some custom parameters and adopt the rest from an existing config
-    let semi_custom_options = opts::FormatSizeOptions {
+    let semi_custom_options = FormatSizeOptions {
         decimal_zeroes: 3,
-        ..opts::DECIMAL
+        ..DECIMAL
     };
 
-    println!("{}", 1000.file_size(semi_custom_options).unwrap());
+    println!("{}", format_size_i(1000, semi_custom_options));
 }

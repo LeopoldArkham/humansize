@@ -1,8 +1,8 @@
 use super::{FormatSizeOptions, FixedAt, Kilo};
 
-/// Options to display sizes in the binary format.
+/// Options to display sizes in the SI format.
 pub const BINARY: FormatSizeOptions = FormatSizeOptions {
-    divider: Kilo::Binary,
+    kilo: Kilo::Binary,
     units: Kilo::Binary,
     decimal_places: 2,
     decimal_zeroes: 0,
@@ -12,9 +12,9 @@ pub const BINARY: FormatSizeOptions = FormatSizeOptions {
     suffix: "",
 };
 
-/// Options to display sizes in the decimal format.
+/// Options to display sizes in the SI (decimal) format.
 pub const DECIMAL: FormatSizeOptions = FormatSizeOptions {
-    divider: Kilo::Decimal,
+    kilo: Kilo::Decimal,
     units: Kilo::Decimal,
     decimal_places: 2,
     decimal_zeroes: 0,
@@ -25,9 +25,9 @@ pub const DECIMAL: FormatSizeOptions = FormatSizeOptions {
 };
 
 /// Options to display sizes in the "conventional" format.
-/// This 1024 as the value of the `Kilo`, but displays decimal-style units (`KB`, not `KiB`).
+/// This 1024 as the value of the `Kilo`, but displays decimal-style units (`kB`, not `KiB`).
 pub const CONVENTIONAL: FormatSizeOptions = FormatSizeOptions {
-    divider: Kilo::Binary,
+    kilo: Kilo::Binary,
     units: Kilo::Decimal,
     decimal_places: 2,
     decimal_zeroes: 0,

@@ -13,6 +13,15 @@ pub enum Kilo {
     Binary,
 }
 
+impl Kilo {
+    pub(crate) fn value(&self) -> f64 {
+        match self {
+            Kilo::Decimal =>  1000.0,
+            Kilo::Binary =>  1024.0,
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone)]
 /// Forces a certain representation of the resulting file size.
 pub enum FixedAt {
@@ -32,7 +41,7 @@ pub enum FixedAt {
 #[derive(Debug, Clone, Copy)]
 pub struct FormatSizeOptions {
     /// The scale (binary/decimal) to divide against.
-    pub divider: Kilo,
+    pub kilo: Kilo,
 
     /// The unit set to display.
     pub units: Kilo,
@@ -46,13 +55,13 @@ pub struct FormatSizeOptions {
     /// Whether to force a certain representation and if so, which one.
     pub fixed_at: FixedAt,
 
-    /// Whether to use the full suffix or its abbreviation.
+    /// Whether to use the full unit (e.g. `Kilobyte`) or its abbreviation (`kB`).
     pub long_units: bool,
 
     /// Whether to place a space between value and units.
     pub space: bool,
 
-    /// An optional suffix which will be appended after the unit.
+    /// An optional suffix which will be appended after the unit. Useful to represent speeds (e.g. `1 kB/s)
     pub suffix: &'static str,
 }
 

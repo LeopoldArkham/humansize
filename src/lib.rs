@@ -6,9 +6,9 @@ Humansize lets you easily represent file sizes in a human-friendly format.
 You can specify your own formatting style, pick among the three defaults provided
 by the library:
 
-* Decimal (Multiples of 1000, `KB` units)
-* Binary (Multiples of 1024, `KiB` units)
-* Conventional (Multiples of 1024, `KB` units)
+* Decimal (kilo = 1000, unit format is `kB`)
+* Binary (kilo = 1024, unit format is `KiB`)
+* Windows/Conventional (kilo = 1024, unit format is `kB`)
 
 ## How to use it
 
@@ -18,15 +18,15 @@ provided by the options module.
 
 ```rust
 extern crate humansize;
-use humansize::FileSize;
+use humansize::format_size;
 
 fn main() {
-	let size = 1000;
-	println!("Size is {}", size.file_size(humansize::DECIMAL).unwrap());
+	let size = 1000usize;
+	println!("Size is {}", format_size(size, humansize::DECIMAL));
 
-	println!("Size is {}", size.file_size(humansize::BINARY).unwrap());
+	println!("Size is {}", format_size(size, humansize::BINARY));
 
-	println!("Size is {}", size.file_size(humansize::CONVENTIONAL).unwrap());
+	println!("Size is {}", format_size(size, humansize::CONVENTIONAL));
 }
 ```
 
@@ -72,17 +72,14 @@ impl<V: ToF64, O: AsRef<FormatSizeOptions>> IFormatter<V, O> {
 impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for IFormatter<T, O> {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         let opts = self.options.as_ref();
-        let divider = match opts.divider {
-            Kilo::Decimal => 1000.0,
-            Kilo::Binary => 1024.0,
-        };
+        let divider = opts.kilo.value();
     
         let mut size: f64 = self.value.to_f64();
         let mut scale_idx = 0;
     
         match opts.fixed_at {
             FixedAt::No => {
-                while size >= divider {
+                while fabs(size) >= divider {
                     size /= divider;
                     scale_idx += 1;
                 }

@@ -10,9 +10,9 @@ Humansize lets you easily represent file sizes in a human-friendly format.
 You can specify your own formatting style or pick among the three defaults provided
 by the library:
 
-* Decimal (Multiples of 1000, `KB` units)
-* Binary (Multiples of 1024, `KiB` units)
-* Windows/Conventional (Multiples of 1024, `KB` units)
+* Decimal (kilo = 1000, unit format is `kB`)
+* Binary (kilo = 1024, unit format is `KiB`)
+* Windows/Conventional (kilo = 1024, unit format is `kB`)
 
 ## How to use it
 

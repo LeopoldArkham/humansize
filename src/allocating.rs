@@ -5,7 +5,7 @@ use crate::options::FormatSizeOptions;
 use crate::IFormatter;
 
 pub fn format_size_i(input: impl ToF64, options: impl AsRef<FormatSizeOptions>) -> String {
-  format!("{}", IFormatter{value: input, options: options})
+  format!("{}", IFormatter{value: input, options})
 }
 
 pub fn format_size(input: impl ToF64 + Unsigned, options: impl AsRef<FormatSizeOptions>) -> String {
@@ -13,11 +13,11 @@ pub fn format_size(input: impl ToF64 + Unsigned, options: impl AsRef<FormatSizeO
 }
 
 pub fn make_format_i<T: ToF64>(options: impl AsRef<FormatSizeOptions>) -> impl Fn(T) -> String {
-  return move |val | -> String {
+   move |val | -> String {
       format_size_i(val, &options)
   }
 }
 
 pub fn make_format<T: ToF64 + Unsigned>(options: impl AsRef<FormatSizeOptions>) -> impl Fn(T) -> String {
-  return make_format_i(options);
+  make_format_i(options)
 }

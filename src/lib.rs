@@ -21,12 +21,12 @@ extern crate humansize;
 use humansize::format_size;
 
 fn main() {
-	let size = 1000usize;
-	println!("Size is {}", format_size(size, humansize::DECIMAL));
+    let size = 1000usize;
+    println!("Size is {}", format_size(size, humansize::DECIMAL));
 
-	println!("Size is {}", format_size(size, humansize::BINARY));
+    println!("Size is {}", format_size(size, humansize::BINARY));
 
-	println!("Size is {}", format_size(size, humansize::CONVENTIONAL));
+    println!("Size is {}", format_size(size, humansize::CONVENTIONAL));
 }
 ```
 
@@ -65,7 +65,7 @@ pub struct IFormatter<T: ToF64, O: AsRef<FormatSizeOptions>> {
 
 impl<V: ToF64, O: AsRef<FormatSizeOptions>> IFormatter<V, O> {
     pub fn new(value: V, options: O) -> Self {
-        IFormatter{value: value, options: options}
+        IFormatter{value: value, options}
     }
 }
 
@@ -129,7 +129,7 @@ pub struct Formatter<T: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> {
 
 impl<V: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> Formatter<V, O> {
     pub fn new(value: V, options: O) -> Self {
-        Formatter{value: value, options: options}
+        Formatter{value, options}
     }
 }
 

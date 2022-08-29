@@ -1,7 +1,7 @@
 use alloc::string::String;
 
 use crate::options::FormatSizeOptions;
-use crate::traits::*;
+use crate::numeric_traits::*;
 use crate::IFormatter;
 
 pub fn format_size_i(input: impl ToF64, options: impl AsRef<FormatSizeOptions>) -> String {

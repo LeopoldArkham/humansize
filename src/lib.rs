@@ -46,8 +46,8 @@ mod options;
 pub use options::{FixedAt, FormatSizeOptions, Kilo, BINARY, CONVENTIONAL, DECIMAL};
 
 mod scales;
-mod traits;
-use traits::{ToF64, Unsigned};
+mod numeric_traits;
+use numeric_traits::{ToF64, Unsigned};
 
 #[cfg(not(feature = "no_alloc"))]
 mod allocating;

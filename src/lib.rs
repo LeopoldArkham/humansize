@@ -43,11 +43,11 @@ use core::f64;
 use libm::{fabs, modf};
 
 mod options;
-pub use options::{FormatSizeOptions, BINARY, CONVENTIONAL, DECIMAL, FixedAt, Kilo};
+pub use options::{FixedAt, FormatSizeOptions, Kilo, BINARY, CONVENTIONAL, DECIMAL};
 
 mod scales;
 mod traits;
-use traits::{ToF64,Unsigned};
+use traits::{ToF64, Unsigned};
 
 #[cfg(not(feature = "no_alloc"))]
 mod allocating;
@@ -56,7 +56,7 @@ pub use allocating::*;
 
 fn f64_eq(left: f64, right: f64) -> bool {
     left == right || fabs(left - right) <= f64::EPSILON
-  }
+}
 
 pub struct IFormatter<T: ToF64, O: AsRef<FormatSizeOptions>> {
     pub value: T,
@@ -65,7 +65,7 @@ pub struct IFormatter<T: ToF64, O: AsRef<FormatSizeOptions>> {
 
 impl<V: ToF64, O: AsRef<FormatSizeOptions>> IFormatter<V, O> {
     pub fn new(value: V, options: O) -> Self {
-        IFormatter{value, options}
+        IFormatter { value, options }
     }
 }
 
@@ -73,10 +73,10 @@ impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for IFormatter<T,
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         let opts = self.options.as_ref();
         let divider = opts.kilo.value();
-    
+
         let mut size: f64 = self.value.to_f64();
         let mut scale_idx = 0;
-    
+
         match opts.fixed_at {
             FixedAt::No => {
                 while fabs(size) >= divider {
@@ -96,29 +96,35 @@ impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for IFormatter<T,
             (Kilo::Decimal, false) => scales::SCALE_DECIMAL[scale_idx],
             (Kilo::Decimal, true) => scales::SCALE_DECIMAL_LONG[scale_idx],
             (Kilo::Binary, false) => scales::SCALE_BINARY[scale_idx],
-            (Kilo::Binary, true) => scales::SCALE_BINARY_LONG[scale_idx]
+            (Kilo::Binary, true) => scales::SCALE_BINARY_LONG[scale_idx],
         };
-    
+
         // Remove "s" from the scale if the size is 1.x
         let (fpart, ipart) = modf(size);
-        if opts.long_units && f64_eq(ipart, 1.0) { scale = &scale[0 .. scale.len()-1]; }
-    
+        if opts.long_units && f64_eq(ipart, 1.0) {
+            scale = &scale[0..scale.len() - 1];
+        }
+
         let places = if f64_eq(fpart, 0.0) {
             opts.decimal_zeroes
         } else {
             opts.decimal_places
         };
-    
-        let space = if opts.space {" "} else {""};
-    
+
+        let space = if opts.space { " " } else { "" };
+
         write!(f, "{:.*}{}{}{}", places, size, space, scale, opts.suffix)
     }
 }
 
-
-impl<'a, U: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions>> From<&'a Formatter<U, O>> for IFormatter<U, &'a O> {
-    fn from(source: & 'a Formatter<U, O>) -> Self {
-        IFormatter{value: source.value, options: &source.options}
+impl<'a, U: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions>> From<&'a Formatter<U, O>>
+    for IFormatter<U, &'a O>
+{
+    fn from(source: &'a Formatter<U, O>) -> Self {
+        IFormatter {
+            value: source.value,
+            options: &source.options,
+        }
     }
 }
 
@@ -129,11 +135,13 @@ pub struct Formatter<T: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> {
 
 impl<V: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> Formatter<V, O> {
     pub fn new(value: V, options: O) -> Self {
-        Formatter{value, options}
+        Formatter { value, options }
     }
 }
 
-impl<T: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions> + Copy> core::fmt::Display for Formatter<T, O> {
+impl<T: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions> + Copy> core::fmt::Display
+    for Formatter<T, O>
+{
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         write!(f, "{}", IFormatter::from(self))
     }

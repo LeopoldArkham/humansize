@@ -1,6 +1,6 @@
 extern crate humansize;
 //Import the trait and the options module
-use humansize::{format_size, BINARY, DECIMAL, CONVENTIONAL};
+use humansize::{format_size, BINARY, CONVENTIONAL, DECIMAL};
 
 fn main() {
     // Call the file_size method on any non-negative integer with the option set you require

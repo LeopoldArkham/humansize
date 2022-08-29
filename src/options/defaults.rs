@@ -1,4 +1,4 @@
-use super::{FormatSizeOptions, FixedAt, Kilo};
+use super::{FixedAt, FormatSizeOptions, Kilo};
 
 /// Options to display sizes in the SI format.
 pub const BINARY: FormatSizeOptions = FormatSizeOptions {

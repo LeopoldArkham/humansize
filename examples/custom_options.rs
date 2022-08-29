@@ -1,5 +1,5 @@
 extern crate humansize;
-use humansize::{format_size, format_size_i, FormatSizeOptions, Kilo, FixedAt, DECIMAL};
+use humansize::{format_size, format_size_i, FixedAt, FormatSizeOptions, Kilo, DECIMAL};
 
 fn main() {
     // Declare a fully custom option struct

@@ -1,5 +1,5 @@
 pub trait ToF64 {
-  fn to_f64(&self) -> f64;
+    fn to_f64(&self) -> f64;
 }
 
 macro_rules! impl_to_f64 {
@@ -13,7 +13,6 @@ macro_rules! impl_to_f64 {
 }
 
 impl_to_f64!(for usize u8 u16 u32 u64 isize i8 i16 i32 i64);
-
 
 pub trait Unsigned {}
 

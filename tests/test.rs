@@ -1,5 +1,5 @@
 use humansize::{
-    format_size,format_size_i,  BINARY, DECIMAL, CONVENTIONAL, FormatSizeOptions, FixedAt
+    format_size, format_size_i, FixedAt, FormatSizeOptions, BINARY, CONVENTIONAL, DECIMAL,
 };
 
 #[test]
@@ -62,13 +62,8 @@ fn test_sizes() {
         "0.0000139016 TiB"
     );
 
-    let semi_custom_options7 = FormatSizeOptions {
-        ..DECIMAL
-    };
-    assert_eq!
-        ((format_size_i(-5500, &semi_custom_options7)),
-        "-5.50 kB"
-    );
+    let semi_custom_options7 = FormatSizeOptions { ..DECIMAL };
+    assert_eq!((format_size_i(-5500, &semi_custom_options7)), "-5.50 kB");
     assert_eq!((format_size(5500u32, &semi_custom_options7)), "5.50 kB");
 }
 
@@ -101,10 +96,7 @@ fn pluralization_works() {
 
     assert_eq!(format_size(1000000000u32, &options), "1.00 Gigabyte",);
 
-    assert_eq!(
-        format_size_i(1000000000000_i64, &options),
-        "1.00 Terabyte",
-    );
+    assert_eq!(format_size_i(1000000000000_i64, &options), "1.00 Terabyte",);
 
     assert_eq!(
         format_size_i(1000000000000000_i64, &options),
@@ -125,10 +117,7 @@ fn max_value_decimal() {
         ..DECIMAL
     };
 
-    assert_eq!(
-        format_size(std::u64::MAX, &options),
-        "18.4467441 Exabytes",
-    );
+    assert_eq!(format_size(std::u64::MAX, &options), "18.4467441 Exabytes",);
 }
 
 #[test]

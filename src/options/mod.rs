@@ -16,8 +16,8 @@ pub enum Kilo {
 impl Kilo {
     pub(crate) fn value(&self) -> f64 {
         match self {
-            Kilo::Decimal =>  1000.0,
-            Kilo::Binary =>  1024.0,
+            Kilo::Decimal => 1000.0,
+            Kilo::Binary => 1024.0,
         }
     }
 }

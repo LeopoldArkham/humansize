@@ -26,3 +26,28 @@ pub(crate) static SCALE_BINARY_LONG: [&str; 9] = [
     "Zebibytes",
     "Yobibytes",
 ];
+
+pub(crate) static SCALE_DECIMAL_BIT: [&str; 9] = [
+    "bits", "kbit", "Mbit", "Gbit", "Tbit", "Pbit", "Ebit", "Zbit", "Ybit",
+];
+
+pub(crate) static SCALE_DECIMAL_BIT_LONG: [&str; 9] = [
+    "Bits",
+    "Kilobits",
+    "Megabits",
+    "Gigabits",
+    "Terabits",
+    "Petabits",
+    "Exabits",
+    "Zettabits",
+    "Yottabits",
+];
+
+pub(crate) static SCALE_BINARY_BIT: [&str; 9] = [
+    "bits", "Kibit", "Mibit", "Gibit", "Tibit", "Pibit", "Eibit", "Zibit", "Yibit",
+];
+
+pub(crate) static SCALE_BINARY_BIT_LONG: [&str; 9] = [
+    "bits", "Kibibits", "Mebibits", "Gibibits", "Tebibits", "Pebibits", "Exbibits", "Zebibits",
+    "Yobibits",
+];

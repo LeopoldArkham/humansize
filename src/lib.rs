@@ -2,36 +2,114 @@
 /*!
 # **Humansize**
 
-Humansize lets you easily represent file sizes in a human-friendly format.
-You can specify your own formatting style, pick among the three defaults provided
-by the library:
+## Features
+Humansize is a humanization library for information size that is:
+- Simple & convenient to use
+- Customizable
+- Supports byte or bit sizes
+- `no-std`
+- Optionally non-allocating
+- Optionally accepts signed values
 
-* Decimal (kilo = 1000, unit format is `kB`)
-* Binary (kilo = 1024, unit format is `KiB`)
-* Windows/Conventional (kilo = 1024, unit format is `kB`)
+## How to use it...
 
-## How to use it
-
-Simply import the `FileSize` trait and the options module and call the
-file_size method on any positive integer, using one of the three standards
-provided by the options module.
-
-```rust
-extern crate humansize;
-use humansize::format_size;
-
-fn main() {
-    let size = 1000usize;
-    println!("Size is {}", format_size(size, humansize::DECIMAL));
-
-    println!("Size is {}", format_size(size, humansize::BINARY));
-
-    println!("Size is {}", format_size(size, humansize::CONVENTIONAL));
-}
+Add humansize as a dependency to your project's `cargo.toml`:
+```toml
+[dependencies]
+...
+humansize = "2.0.0"
 ```
 
-If you wish to customize the way sizes are displayed, you may create your own custom `FormatSizeOptions` struct
-and pass that to the method. See the `custom_options.rs` file in the example folder.
+### ... to easily format a size:
+
+1. Import the `format_size` function as well as your preferred set of defaults:
+    - `DECIMAL` (SI)
+    - `BINARY` (IEC)
+    - `WINDOWS` (IEC values but SI units)
+2. Call `format_size` with an unsigned integer 
+
+```rust
+use humansize::{format_size, DECIMAL};
+
+let size = 1_000_000u64;
+let res: String = format_size(size, DECIMAL);
+
+assert_eq!(&res, "1 MB");
+
+```
+
+### ... to format many sizes:
+To improve reusability, you can use `create_format`, which returns a formatter function akin to `format_size` but with the options argument curried so it doesn't need to be specified again:
+
+```rust
+use humansize::{make_format, DECIMAL};
+
+let formatter = make_format(DECIMAL);
+
+assert_eq!(formatter(1_000_000u64), "1 MB");
+assert_eq!(formatter(1_000_000_000u64), "1 GB");
+//...
+
+```
+
+### ... to avoid allocation:
+Specify the `no_alloc` feature flag in your project's `cargo.toml`:
+```toml
+[dependencies]
+...
+humansize = { version = "2.0.0", features = ["no_alloc"] }
+```
+This excludes all allocating code from compilation. You may now use the library's internal `Formatter` struct, which implements `core::fmt::display` so that you can `write!` it to a custom buffer of your choice:
+```rust
+use humansize::{IFormatter, DECIMAL};
+
+let formatter = IFormatter::new(1_000_000, DECIMAL);
+assert_eq!(format!("{}", formatter), "1 MB");
+```
+### ... with the `impl` style API:
+For stylistic reasons, you may prefer to use the impl-style API of earlier versions of the crate.
+To do so, specify the `impl-style` feature flag in your project's `cargo.toml`:
+
+```toml
+[dependencies]
+...
+humansize = { version = "2.0.0", features = ["impl_style"] }
+```
+Enabling this feature makes two methods available:
+- `format_size` on unsigned integers types
+- `format_size_i` on signed integer types.
+
+To use it, bring the FormatSize trait into scope and call its method on an integer type:
+```ignore
+use humansize::{FormatSize, FormatSizeI DECIMAL};
+
+assert_eq!(1_000_000u64.format_size(DECIMAL), "1 MB");
+assert_eq!((-1_000_000).format_size_i(DECIMAL), "-1 MB");
+```
+### ... to further customize the output:
+Humansize exports three default option sets:
+* `Decimal`: kilo = 1000, unit format is `XB`.
+* `Binary`: kilo = 1024, unit format is `XiB`.
+* `WINDOWS` (Windows): kilo = 1024, unit format is `XB`.
+
+The formatting can be further customized by providing providing your own option set. See the documentation of the `FormatSizeOptions` struct to see all the addressable parameters, and [this example](examples/custom_options.rs) for its usage.
+
+### ... to accept negative values:
+The solutions presented above only accept unsigned integer types as input (`usize`, `8`, `u16`, `u32` and `u64`). If however accepting negative values is correct for your application, a signed alternative exists for each of them that will accept signed integer types, and format them accordingly if negative:
+
+- `format_size` : `format_size_i`
+- `create_format` : `create_format_i`
+- `FormatSize` trait : `FormatSizeI` trait
+- `SizeFormatter` : `ISizeFormatter`
+```rust
+use humansize::{format_size_i, make_format_i, DECIMAL};
+
+assert_eq!(&format_size_i(-1_000_000, DECIMAL), "-1 MB");
+
+let signed_formatter = make_format_i(DECIMAL);
+assert_eq!(&signed_formatter(-1_000_000), "-1 MB");
+
+```
 */
 
 #[macro_use]
@@ -39,110 +117,24 @@ and pass that to the method. See the `custom_options.rs` file in the example fol
 extern crate alloc;
 extern crate libm;
 
-use core::f64;
-use libm::{fabs, modf};
-
 mod options;
-pub use options::{FixedAt, FormatSizeOptions, Kilo, BINARY, CONVENTIONAL, DECIMAL};
+pub use options::{BaseUnit, FixedAt, FormatSizeOptions, Kilo, BINARY, WINDOWS, DECIMAL};
 
-mod scales;
 mod numeric_traits;
-use numeric_traits::{ToF64, Unsigned};
+pub use numeric_traits::{ToF64, Unsigned, Signed};
+
+mod utils;
+mod scales;
 
 #[cfg(not(feature = "no_alloc"))]
 mod allocating;
 #[cfg(not(feature = "no_alloc"))]
 pub use allocating::*;
 
-fn f64_eq(left: f64, right: f64) -> bool {
-    left == right || fabs(left - right) <= f64::EPSILON
-}
+#[cfg(feature = "impl_style")]
+mod impl_style;
+#[cfg(feature = "impl_style")]
+pub use impl_style::{FormatSize, FormatSizeI};
 
-pub struct IFormatter<T: ToF64, O: AsRef<FormatSizeOptions>> {
-    pub value: T,
-    pub options: O,
-}
-
-impl<V: ToF64, O: AsRef<FormatSizeOptions>> IFormatter<V, O> {
-    pub fn new(value: V, options: O) -> Self {
-        IFormatter { value, options }
-    }
-}
-
-impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for IFormatter<T, O> {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        let opts = self.options.as_ref();
-        let divider = opts.kilo.value();
-
-        let mut size: f64 = self.value.to_f64();
-        let mut scale_idx = 0;
-
-        match opts.fixed_at {
-            FixedAt::No => {
-                while fabs(size) >= divider {
-                    size /= divider;
-                    scale_idx += 1;
-                }
-            }
-            val => {
-                while scale_idx != val as usize {
-                    size /= divider;
-                    scale_idx += 1;
-                }
-            }
-        }
-
-        let mut scale = match (opts.units, opts.long_units) {
-            (Kilo::Decimal, false) => scales::SCALE_DECIMAL[scale_idx],
-            (Kilo::Decimal, true) => scales::SCALE_DECIMAL_LONG[scale_idx],
-            (Kilo::Binary, false) => scales::SCALE_BINARY[scale_idx],
-            (Kilo::Binary, true) => scales::SCALE_BINARY_LONG[scale_idx],
-        };
-
-        // Remove "s" from the scale if the size is 1.x
-        let (fpart, ipart) = modf(size);
-        if opts.long_units && f64_eq(ipart, 1.0) {
-            scale = &scale[0..scale.len() - 1];
-        }
-
-        let places = if f64_eq(fpart, 0.0) {
-            opts.decimal_zeroes
-        } else {
-            opts.decimal_places
-        };
-
-        let space = if opts.space { " " } else { "" };
-
-        write!(f, "{:.*}{}{}{}", places, size, space, scale, opts.suffix)
-    }
-}
-
-impl<'a, U: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions>> From<&'a Formatter<U, O>>
-    for IFormatter<U, &'a O>
-{
-    fn from(source: &'a Formatter<U, O>) -> Self {
-        IFormatter {
-            value: source.value,
-            options: &source.options,
-        }
-    }
-}
-
-pub struct Formatter<T: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> {
-    value: T,
-    options: O,
-}
-
-impl<V: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> Formatter<V, O> {
-    pub fn new(value: V, options: O) -> Self {
-        Formatter { value, options }
-    }
-}
-
-impl<T: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions> + Copy> core::fmt::Display
-    for Formatter<T, O>
-{
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        write!(f, "{}", IFormatter::from(self))
-    }
-}
+mod formatters;
+pub use formatters::{Formatter, IFormatter};

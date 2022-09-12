@@ -23,3 +23,14 @@ macro_rules! impl_unsigned {
 }
 
 impl_unsigned!(for usize u8 u16 u32 u64);
+
+
+pub trait Signed {}
+
+macro_rules! impl_unsigned {
+  (for $($t:ty)*) => ($(
+      impl Signed for $t {}
+  )*)
+}
+
+impl_unsigned!(for isize i8 i16 i32 i64);

@@ -1,5 +1,5 @@
 use humansize::{
-    format_size, format_size_i, FixedAt, FormatSizeOptions, BINARY, CONVENTIONAL, DECIMAL,
+    format_size, format_size_i, BaseUnit, FixedAt, FormatSizeOptions, BINARY, WINDOWS, DECIMAL,
 };
 
 #[test]
@@ -11,82 +11,67 @@ fn test_sizes() {
     assert_eq!(format_size(1023u32, BINARY), "1023 B");
     assert_eq!(format_size(1023u32, DECIMAL), "1.02 kB");
     assert_eq!(format_size(1024u32, BINARY), "1 KiB");
-    assert_eq!(format_size(1024u32, CONVENTIONAL), "1 kB");
+    assert_eq!(format_size(1024u32, WINDOWS), "1 kB");
 
-    let semi_custom_options = FormatSizeOptions {
-        space: false,
-        ..DECIMAL
-    };
-    assert_eq!(format_size(1000u32, semi_custom_options), "1kB");
+    let custom_options = FormatSizeOptions::from(DECIMAL).space_after_value(false);
+    assert_eq!(format_size(1000u32, custom_options), "1kB");
 
-    let semi_custom_options2 = FormatSizeOptions {
-        suffix: "/s",
-        ..BINARY
-    };
-    assert_eq!(format_size(999u32, semi_custom_options2), "999 B/s");
+    let custom_options = FormatSizeOptions::from(BINARY).suffix("/s");
+    assert_eq!(format_size(999u32, custom_options), "999 B/s");
 
-    let semi_custom_options3 = FormatSizeOptions {
-        suffix: "/day",
-        space: false,
-        ..DECIMAL
-    };
-    assert_eq!(format_size(1000u32, semi_custom_options3), "1kB/day");
+    let custom_options = FormatSizeOptions::from(DECIMAL).suffix("/day").space_after_value(false);
+    assert_eq!(format_size(1000u32, custom_options), "1kB/day");
 
-    let semi_custom_options4 = FormatSizeOptions {
-        fixed_at: FixedAt::Byte,
-        ..BINARY
-    };
-    assert_eq!(format_size(2048u32, semi_custom_options4), "2048 B");
 
-    let semi_custom_options5 = FormatSizeOptions {
-        fixed_at: FixedAt::Kilo,
-        ..BINARY
-    };
+    let custom_options = FormatSizeOptions::from(BINARY).fixed_at(Some(FixedAt::Base));
+    assert_eq!(format_size(2048u32, custom_options), "2048 B");
+
+
+    let custom_options = FormatSizeOptions::from(BINARY).fixed_at(Some(FixedAt::Base)).long_units(true);
+    assert_eq!(format_size(2048u32, custom_options), "2048 Bytes");
+
+
+
+    let custom_options = FormatSizeOptions::from(BINARY).fixed_at(Some(FixedAt::Kilo));
     assert_eq!(
-        format_size(16584975u32, semi_custom_options5),
+        format_size(16584975u32, custom_options),
         "16196.26 KiB"
     );
-
     assert_eq!(
-        format_size_i(-16584975, semi_custom_options5),
+        format_size_i(-16584975, custom_options),
         "-16196.26 KiB"
     );
 
-    let semi_custom_options6 = FormatSizeOptions {
-        fixed_at: FixedAt::Tera,
-        decimal_places: 10,
-        ..BINARY
-    };
+
+
+    let custom_options = FormatSizeOptions::from(BINARY).fixed_at(Some(FixedAt::Tera)).decimal_places(10);
     assert_eq!(
-        format_size(15284975u32, semi_custom_options6),
+        format_size(15284975u32, custom_options),
         "0.0000139016 TiB"
     );
 
-    let semi_custom_options7 = FormatSizeOptions { ..DECIMAL };
-    assert_eq!((format_size_i(-5500, &semi_custom_options7)), "-5.50 kB");
-    assert_eq!((format_size(5500u32, &semi_custom_options7)), "5.50 kB");
+    assert_eq!((format_size_i(-5500, DECIMAL)), "-5.50 kB");
+    assert_eq!((format_size(5500u32, DECIMAL)), "5.50 kB");
+
+
+    let custom_options = FormatSizeOptions::from(DECIMAL).base_unit(BaseUnit::Bit);
+    assert_eq!((format_size(1usize, custom_options)), "1 bit");
+    assert_eq!((format_size(150usize, custom_options)), "150 bits");
+    assert_eq!((format_size(1000usize, custom_options)), "1 kbit");
 }
 
 #[test]
 fn use_custom_option_struct_twice() {
-    let options = FormatSizeOptions {
-        long_units: true,
-        ..DECIMAL
-    };
+    let options = FormatSizeOptions::from(DECIMAL).long_units(true);
 
     assert_eq!(format_size(1500u32, &options), "1.50 Kilobyte",);
-
     assert_eq!(format_size(2500u32, &options), "2.50 Kilobytes",);
     assert_eq!(format_size_i(-2500000, &options), "-2.50 Megabytes",);
 }
 
 #[test]
 fn pluralization_works() {
-    let options = FormatSizeOptions {
-        long_units: true,
-        decimal_zeroes: 2,
-        ..DECIMAL
-    };
+    let options = FormatSizeOptions::from(DECIMAL).long_units(true).decimal_zeroes(2);
 
     assert_eq!(format_size(1u32, &options), "1.00 Byte",);
 
@@ -111,22 +96,13 @@ fn pluralization_works() {
 
 #[test]
 fn max_value_decimal() {
-    let options = FormatSizeOptions {
-        long_units: true,
-        decimal_places: 7,
-        ..DECIMAL
-    };
-
-    assert_eq!(format_size(std::u64::MAX, &options), "18.4467441 Exabytes",);
+    let options = FormatSizeOptions::from(DECIMAL).decimal_places(7).long_units(true);
+    assert_eq!(format_size(core::u64::MAX, &options), "18.4467441 Exabytes",);
 }
 
 #[test]
 fn max_value_binary() {
-    let options = FormatSizeOptions {
-        long_units: true,
-        decimal_places: 7,
-        ..BINARY
-    };
+    let options = FormatSizeOptions::from(BINARY).decimal_places(7).long_units(true);
 
-    assert_eq!(format_size(std::u64::MAX, &options), "16 Exbibytes",);
+    assert_eq!(format_size(core::u64::MAX, &options), "16 Exbibytes",);
 }

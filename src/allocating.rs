@@ -1,16 +1,13 @@
 use alloc::string::String;
 
-use crate::options::FormatSizeOptions;
 use crate::numeric_traits::*;
+use crate::options::FormatSizeOptions;
 use crate::IFormatter;
 
 pub fn format_size_i(input: impl ToF64, options: impl AsRef<FormatSizeOptions>) -> String {
     format!(
         "{}",
-        IFormatter {
-            value: input,
-            options
-        }
+        IFormatter::new(input, options)
     )
 }
 

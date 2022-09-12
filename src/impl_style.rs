@@ -1,6 +1,5 @@
-
+use crate::{FormatSizeOptions, Formatter, IFormatter, Signed, ToF64, Unsigned};
 use alloc::string::String;
-use crate::{IFormatter, Formatter, FormatSizeOptions, ToF64, Unsigned, Signed};
 
 pub trait FormatSize<T> {
     fn format_size(&self, opts: FormatSizeOptions) -> String;

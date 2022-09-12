@@ -26,7 +26,7 @@ humansize = "2.0.0"
     - `DECIMAL` (SI)
     - `BINARY` (IEC)
     - `WINDOWS` (IEC values but SI units)
-2. Call `format_size` with an unsigned integer 
+2. Call `format_size` with an unsigned integer
 
 ```rust
 use humansize::{format_size, DECIMAL};
@@ -118,13 +118,13 @@ extern crate alloc;
 extern crate libm;
 
 mod options;
-pub use options::{BaseUnit, FixedAt, FormatSizeOptions, Kilo, BINARY, WINDOWS, DECIMAL};
+pub use options::{BaseUnit, FixedAt, FormatSizeOptions, Kilo, BINARY, DECIMAL, WINDOWS};
 
 mod numeric_traits;
-pub use numeric_traits::{ToF64, Unsigned, Signed};
+pub use numeric_traits::{Signed, ToF64, Unsigned};
 
-mod utils;
 mod scales;
+mod utils;
 
 #[cfg(not(feature = "no_alloc"))]
 mod allocating;

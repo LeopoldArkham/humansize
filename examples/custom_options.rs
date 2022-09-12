@@ -7,5 +7,4 @@ fn main() {
 
     // Then use it
     println!("{}", format_size(3024usize, custom_options));
-
 }

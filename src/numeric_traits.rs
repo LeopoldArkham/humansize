@@ -24,7 +24,6 @@ macro_rules! impl_unsigned {
 
 impl_unsigned!(for usize u8 u16 u32 u64);
 
-
 pub trait Signed {}
 
 macro_rules! impl_unsigned {

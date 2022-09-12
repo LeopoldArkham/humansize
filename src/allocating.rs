@@ -5,10 +5,7 @@ use crate::options::FormatSizeOptions;
 use crate::IFormatter;
 
 pub fn format_size_i(input: impl ToF64, options: impl AsRef<FormatSizeOptions>) -> String {
-    format!(
-        "{}",
-        IFormatter::new(input, options)
-    )
+    format!("{}", IFormatter::new(input, options))
 }
 
 pub fn format_size(input: impl ToF64 + Unsigned, options: impl AsRef<FormatSizeOptions>) -> String {

@@ -1,6 +1,6 @@
 extern crate humansize;
 
-use humansize::{format_size, format_size_i, Formatter, IFormatter, BINARY, DECIMAL, WINDOWS};
+use humansize::{format_size, format_size_i, SizeFormatter, ISizeFormatter, BINARY, DECIMAL, WINDOWS};
 
 fn main() {
     println!("{}", format_size(5456usize, BINARY));
@@ -11,6 +11,6 @@ fn main() {
     println!("{}", format_size(123456789usize, DECIMAL));
     println!("{}", format_size_i(-123456789, WINDOWS));
 
-    println!("{}", Formatter::new(1234u32, BINARY));
-    println!("{}", IFormatter::new(1234, BINARY));
+    println!("{}", SizeFormatter::new(1234u32, BINARY));
+    println!("{}", ISizeFormatter::new(1234, BINARY));
 }

@@ -61,9 +61,9 @@ humansize = { version = "2.0.0", features = ["no_alloc"] }
 ```
 This excludes all allocating code from compilation. You may now use the library's internal `Formatter` struct, which implements `core::fmt::display` so that you can `write!` it to a custom buffer of your choice:
 ```rust
-use humansize::{IFormatter, DECIMAL};
+use humansize::{ISizeFormatter, DECIMAL};
 
-let formatter = IFormatter::new(1_000_000, DECIMAL);
+let formatter = ISizeFormatter::new(1_000_000, DECIMAL);
 assert_eq!(format!("{}", formatter), "1 MB");
 ```
 ### ... with the `impl` style API:
@@ -137,4 +137,4 @@ mod impl_style;
 pub use impl_style::{FormatSize, FormatSizeI};
 
 mod formatters;
-pub use formatters::{Formatter, IFormatter};
+pub use formatters::{SizeFormatter, ISizeFormatter};

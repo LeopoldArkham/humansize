@@ -2,18 +2,18 @@ use libm::{fabs, modf};
 
 use crate::{scales, utils::f64_eq, BaseUnit, FormatSizeOptions, Kilo, ToF64, Unsigned};
 
-pub struct IFormatter<T: ToF64, O: AsRef<FormatSizeOptions>> {
+pub struct ISizeFormatter<T: ToF64, O: AsRef<FormatSizeOptions>> {
     value: T,
     options: O,
 }
 
-impl<V: ToF64, O: AsRef<FormatSizeOptions>> IFormatter<V, O> {
+impl<V: ToF64, O: AsRef<FormatSizeOptions>> ISizeFormatter<V, O> {
     pub fn new(value: V, options: O) -> Self {
-        IFormatter { value, options }
+        ISizeFormatter { value, options }
     }
 }
 
-impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for IFormatter<T, O> {
+impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for ISizeFormatter<T, O> {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
         let opts = self.options.as_ref();
         let divider = opts.kilo.value();
@@ -64,32 +64,32 @@ impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for IFormatter<T,
     }
 }
 
-impl<'a, U: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions>> From<&'a Formatter<U, O>>
-    for IFormatter<U, &'a O>
+impl<'a, U: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions>> From<&'a SizeFormatter<U, O>>
+    for ISizeFormatter<U, &'a O>
 {
-    fn from(source: &'a Formatter<U, O>) -> Self {
-        IFormatter {
+    fn from(source: &'a SizeFormatter<U, O>) -> Self {
+        ISizeFormatter {
             value: source.value,
             options: &source.options,
         }
     }
 }
 
-pub struct Formatter<T: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> {
+pub struct SizeFormatter<T: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> {
     value: T,
     options: O,
 }
 
-impl<V: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> Formatter<V, O> {
+impl<V: ToF64 + Unsigned, O: AsRef<FormatSizeOptions>> SizeFormatter<V, O> {
     pub fn new(value: V, options: O) -> Self {
-        Formatter { value, options }
+        SizeFormatter { value, options }
     }
 }
 
 impl<T: ToF64 + Unsigned + Copy, O: AsRef<FormatSizeOptions> + Copy> core::fmt::Display
-    for Formatter<T, O>
+    for SizeFormatter<T, O>
 {
     fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        write!(f, "{}", IFormatter::from(self))
+        write!(f, "{}", ISizeFormatter::from(self))
     }
 }

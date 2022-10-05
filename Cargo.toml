@@ -11,6 +11,7 @@ documentation = "https://docs.rs/humansize"
 keywords = ["size", "formatting", "humanize", "file-size"]
 categories = ["value-formatting"]
 license = "MIT/Apache-2.0"
+exclude = ["/feature-tests"]
 
 [features]
 no_alloc = []

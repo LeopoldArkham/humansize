@@ -59,11 +59,11 @@ Specify the `no_alloc` feature flag in your project's `cargo.toml`:
 ...
 humansize = { version = "2.0.0", features = ["no_alloc"] }
 ```
-This excludes all allocating code from compilation. You may now use the library's internal `Formatter` struct, which implements `core::fmt::display` so that you can `write!` it to a custom buffer of your choice:
+This excludes all allocating code from compilation. You may now use the library's internal `SizeFormatter` struct, which implements `core::fmt::display` so that you can `write!` it to a custom buffer of your choice:
 ```rust
-use humansize::{ISizeFormatter, DECIMAL};
+use humansize::{SizeFormatter, DECIMAL};
 
-let formatter = ISizeFormatter::new(1_000_000, DECIMAL);
+let formatter = SizeFormatter::new(1_000_000usize, DECIMAL);
 assert_eq!(format!("{}", formatter), "1 MB");
 ```
 ### ... with the `impl` style API:
@@ -102,12 +102,19 @@ The solutions presented above only accept unsigned integer types as input (`usiz
 - `FormatSize` trait : `FormatSizeI` trait
 - `SizeFormatter` : `ISizeFormatter`
 ```rust
-use humansize::{format_size_i, make_format_i, DECIMAL};
+use humansize::{format_size_i, make_format_i, ISizeFormatter, DECIMAL};
 
 assert_eq!(&format_size_i(-1_000_000, DECIMAL), "-1 MB");
 
 let signed_formatter = make_format_i(DECIMAL);
 assert_eq!(&signed_formatter(-1_000_000), "-1 MB");
+
+// With the `impl-style` feature enabled:
+// use humansize::FormatSizeI;
+// assert_eq(-1_000_000.format_size(DECIMAL), "-1 MB");
+
+let signed_size_formatter = ISizeFormatter::new(-1_000_000, DECIMAL);
+assert_eq!(format!("{}", signed_size_formatter), "-1 MB");
 
 ```
 */

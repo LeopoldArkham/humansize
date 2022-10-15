@@ -12,6 +12,7 @@ keywords = ["size", "formatting", "humanize", "file-size"]
 categories = ["value-formatting"]
 license = "MIT/Apache-2.0"
 exclude = ["/feature-tests"]
+rust-version = "1.56"
 
 [features]
 no_alloc = []

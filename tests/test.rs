@@ -13,6 +13,10 @@ fn test_sizes() {
     assert_eq!(format_size(1024u32, BINARY), "1 KiB");
     assert_eq!(format_size(1024u32, WINDOWS), "1 kB");
 
+    assert_eq!(format_size_i(1000f32, DECIMAL), "1 kB");
+    assert_eq!(format_size_i(1000f64, DECIMAL), "1 kB");
+
+
     let custom_options = FormatSizeOptions::from(DECIMAL).space_after_value(false);
     assert_eq!(format_size(1000u32, custom_options), "1kB");
 

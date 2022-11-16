@@ -1,6 +1,6 @@
 [package]
 name = "humansize"
-version = "2.1.1"
+version = "2.1.2"
 authors = ["Leopold Arkham <leopold.arkham@gmail.com>"]
 edition = "2021"
 readme = "README.md"

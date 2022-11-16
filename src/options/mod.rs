@@ -4,14 +4,19 @@
 mod defaults;
 pub use self::defaults::*;
 
-#[derive(Debug, PartialEq, Eq, Copy, Clone, Default)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 /// Holds the standard to use when displaying the size.
 pub enum Kilo {
     /// The decimal scale and units. SI standard.
-    #[default]
     Decimal,
     /// The binary scale and units.
     Binary,
+}
+
+impl Default for Kilo {
+    fn default() -> Self {
+        Self::Decimal
+    }
 }
 
 impl Kilo {
@@ -37,11 +42,16 @@ pub enum FixedAt {
     Yotta,
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Default)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum BaseUnit {
     Bit,
-    #[default]
     Byte,
+}
+
+impl Default for BaseUnit {
+    fn default() -> Self {
+        Self::Byte
+    }
 }
 
 /// Holds the options for the `file_size` method.

@@ -17,7 +17,7 @@ Add humansize as a dependency to your project's `cargo.toml`:
 ```toml
 [dependencies]
 ...
-humansize = "2.1.2"
+humansize = "2.1.3"
 ```
 
 ### ... to easily format a size:

@@ -119,51 +119,51 @@ pub struct FormatSizeOptions {
 }
 
 impl FormatSizeOptions {
-    pub fn from(from: FormatSizeOptions) -> FormatSizeOptions {
+    pub const fn from(from: FormatSizeOptions) -> FormatSizeOptions {
         FormatSizeOptions { ..from }
     }
 
-    pub fn base_unit(mut self, base_unit: BaseUnit) -> FormatSizeOptions {
+    pub const fn base_unit(mut self, base_unit: BaseUnit) -> FormatSizeOptions {
         self.base_unit = base_unit;
         self
     }
 
-    pub fn kilo(mut self, kilo: Kilo) -> FormatSizeOptions {
+    pub const fn kilo(mut self, kilo: Kilo) -> FormatSizeOptions {
         self.kilo = kilo;
         self
     }
 
-    pub fn units(mut self, units: Kilo) -> FormatSizeOptions {
+    pub const fn units(mut self, units: Kilo) -> FormatSizeOptions {
         self.units = units;
         self
     }
 
-    pub fn decimal_places(mut self, decimal_places: usize) -> FormatSizeOptions {
+    pub const fn decimal_places(mut self, decimal_places: usize) -> FormatSizeOptions {
         self.decimal_places = decimal_places;
         self
     }
 
-    pub fn decimal_zeroes(mut self, decimal_zeroes: usize) -> FormatSizeOptions {
+    pub const fn decimal_zeroes(mut self, decimal_zeroes: usize) -> FormatSizeOptions {
         self.decimal_zeroes = decimal_zeroes;
         self
     }
 
-    pub fn fixed_at(mut self, fixed_at: Option<FixedAt>) -> FormatSizeOptions {
+    pub const fn fixed_at(mut self, fixed_at: Option<FixedAt>) -> FormatSizeOptions {
         self.fixed_at = fixed_at;
         self
     }
 
-    pub fn long_units(mut self, long_units: bool) -> FormatSizeOptions {
+    pub const fn long_units(mut self, long_units: bool) -> FormatSizeOptions {
         self.long_units = long_units;
         self
     }
 
-    pub fn space_after_value(mut self, insert_space: bool) -> FormatSizeOptions {
+    pub const fn space_after_value(mut self, insert_space: bool) -> FormatSizeOptions {
         self.space_after_value = insert_space;
         self
     }
 
-    pub fn suffix(mut self, suffix: &'static str) -> FormatSizeOptions {
+    pub const fn suffix(mut self, suffix: &'static str) -> FormatSizeOptions {
         self.suffix = suffix;
         self
     }

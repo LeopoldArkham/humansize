@@ -80,7 +80,7 @@ Enabling this feature makes two methods available:
 - `format_size_i` on signed integer types.
 
 To use it, bring the FormatSize trait into scope and call its method on an integer type:
-```ignore
+```rust
 use humansize::{FormatSize, FormatSizeI DECIMAL};
 
 assert_eq!(1_000_000u64.format_size(DECIMAL), "1 MB");

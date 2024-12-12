@@ -39,7 +39,7 @@ assert_eq!(&res, "1 MB");
 ```
 
 ### ... to format many sizes:
-To improve reusability, you can use `create_format`, which returns a formatter function akin to `format_size` but with the options argument curried so it doesn't need to be specified again:
+To improve reusability, you can use `make_format`, which returns a formatter function akin to `format_size` but with the options argument curried so it doesn't need to be specified again:
 
 ```rust
 use humansize::{make_format, DECIMAL};
@@ -98,7 +98,7 @@ The formatting can be further customized by providing providing your own option 
 The solutions presented above only accept unsigned integer types as input (`usize`, `8`, `u16`, `u32` and `u64`). If however accepting negative values is correct for your application, a signed alternative exists for each of them that will accept signed integer types, and format them accordingly if negative:
 
 - `format_size` : `format_size_i`
-- `create_format` : `create_format_i`
+- `make_format` : `make_format_i`
 - `FormatSize` trait : `FormatSizeI` trait
 - `SizeFormatter` : `ISizeFormatter`
 ```rust

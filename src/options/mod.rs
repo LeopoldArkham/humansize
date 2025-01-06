@@ -57,38 +57,6 @@ impl Default for BaseUnit {
 /// Holds the options for the `file_size` method.
 #[derive(Debug, Clone, Copy, Default)]
 #[non_exhaustive]
-pub struct FormatSizeOptionsBuilder {
-    /// Whether the value being formatted represents an amount of bits or bytes.
-    pub base_unit: BaseUnit,
-
-    /// The scale (binary/decimal) to divide against.
-    pub kilo: Kilo,
-
-    /// The unit set to display.
-    pub units: Kilo,
-
-    /// The amount of decimal places to display if the decimal part is non-zero.
-    pub decimal_places: usize,
-
-    /// The amount of zeroes to display if the decimal part is zero.
-    pub decimal_zeroes: usize,
-
-    /// Whether to force a certain representation and if so, which one.
-    pub fixed_at: Option<FixedAt>,
-
-    /// Whether to use the full unit (e.g. `Kilobyte`) or its abbreviation (`kB`).
-    pub long_units: bool,
-
-    /// Whether to place a space between value and units.
-    pub space_after_value: bool,
-
-    /// An optional suffix which will be appended after the unit. Useful to represent speeds (e.g. `1 kB/s)
-    pub suffix: &'static str,
-}
-
-/// Holds the options for the `file_size` method.
-#[derive(Debug, Clone, Copy, Default)]
-#[non_exhaustive]
 pub struct FormatSizeOptions {
     /// Whether the value being formatted represents an amount of bits or bytes.
     pub base_unit: BaseUnit,
@@ -114,8 +82,11 @@ pub struct FormatSizeOptions {
     /// Whether to place a space between value and units.
     pub space_after_value: bool,
 
-    /// An optional suffix which will be appended after the unit. Useful to represent speeds (e.g. `1 kB/s)
+    /// An optional suffix which will be appended after the unit. Useful to represent speeds (e.g. `1 kB/s`)
     pub suffix: &'static str,
+
+    // If the number is too great for the scale that was chosen, or so great that it exceeds the largest unit of the scale, the thousands separator will be used if provided. By default, it is None and no formatting will occur
+    pub thousands_separator: Option<char>,
 }
 
 impl FormatSizeOptions {
@@ -165,6 +136,11 @@ impl FormatSizeOptions {
 
     pub const fn suffix(mut self, suffix: &'static str) -> FormatSizeOptions {
         self.suffix = suffix;
+        self
+    }
+
+    pub const fn thousands_separator(mut self, sep: Option<char>) -> FormatSizeOptions {
+        self.thousands_separator = sep;
         self
     }
 }

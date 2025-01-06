@@ -12,7 +12,7 @@ macro_rules! impl_to_f64 {
   )*)
 }
 
-impl_to_f64!(for usize u8 u16 u32 u64 isize i8 i16 i32 i64 f32 f64);
+impl_to_f64!(for usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64);
 
 pub trait Unsigned {}
 
@@ -22,7 +22,7 @@ macro_rules! impl_unsigned {
   )*)
 }
 
-impl_unsigned!(for usize u8 u16 u32 u64);
+impl_unsigned!(for usize u8 u16 u32 u64 u128);
 
 pub trait Signed {}
 
@@ -32,4 +32,4 @@ macro_rules! impl_unsigned {
   )*)
 }
 
-impl_unsigned!(for isize i8 i16 i32 i64);
+impl_unsigned!(for isize i8 i16 i32 i64 i128);

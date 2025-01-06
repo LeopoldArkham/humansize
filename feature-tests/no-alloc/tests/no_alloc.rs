@@ -1,8 +1,8 @@
 // This sub-crate exists to make sure that everything works well with the `no_alloc` flag enabled
+#[no_std]
 use core::fmt::Write;
 
 use humansize::{SizeFormatter, DECIMAL};
-
 
 struct Buffer<const N: usize>([u8; N], usize);
 
@@ -21,7 +21,7 @@ impl<const N: usize> Write for Buffer<N> {
 
 #[test]
 fn test() {
-  let mut result = Buffer([0u8; 4], 0);
-  write!(&mut result, "{}", SizeFormatter::new(1000usize, DECIMAL)).unwrap();
-  assert_eq!(core::str::from_utf8(&result.0).unwrap(), "1 kB");
+    let mut result = Buffer([0u8; 4], 0);
+    write!(&mut result, "{}", SizeFormatter::new(1000usize, DECIMAL)).unwrap();
+    assert_eq!(core::str::from_utf8(&result.0).unwrap(), "1 kB");
 }

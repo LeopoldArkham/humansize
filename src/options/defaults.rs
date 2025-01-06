@@ -11,6 +11,7 @@ pub const BINARY: FormatSizeOptions = FormatSizeOptions {
     long_units: false,
     space_after_value: true,
     suffix: "",
+    thousands_separator: None,
 };
 
 /// Options to display sizes in the SI (decimal) format.
@@ -24,6 +25,7 @@ pub const DECIMAL: FormatSizeOptions = FormatSizeOptions {
     long_units: false,
     space_after_value: true,
     suffix: "",
+    thousands_separator: None,
 };
 
 /// Options to display sizes in the "WINDOWS" format.
@@ -38,4 +40,5 @@ pub const WINDOWS: FormatSizeOptions = FormatSizeOptions {
     long_units: false,
     space_after_value: true,
     suffix: "",
+    thousands_separator: None,
 };

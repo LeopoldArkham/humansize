@@ -1,4 +1,4 @@
-use libm::{fabs, modf};
+use libm::{fabs, modf, pow, round};
 
 use crate::{scales, utils::f64_eq, BaseUnit, FormatSizeOptions, Kilo, ToF64, Unsigned};
 
@@ -30,6 +30,10 @@ impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for ISizeFormatte
             while fabs(size) >= divider {
                 size /= divider;
                 scale_idx += 1;
+
+                if scale_idx == scales::SCALE_LENGTH - 1 {
+                    break;
+                }
             }
         }
 
@@ -59,6 +63,69 @@ impl<T: ToF64, O: AsRef<FormatSizeOptions>> core::fmt::Display for ISizeFormatte
         };
 
         let space = if opts.space_after_value { " " } else { "" };
+
+        if let Some(sep) = opts.thousands_separator {
+            let mut buffer = [0u8; 100];
+
+            let mut cursor = buffer.len();
+            let is_negative = size.is_sign_negative();
+
+            // Handle the fractional part
+            let mut fraction = round(fpart * pow(10f64, places as f64)) as u64;
+            for _ in 0..places {
+                if cursor == 0 {
+                    panic!("Buffer too small!");
+                }
+                cursor -= 1;
+                buffer[cursor] = b'0' + (fraction % 10) as u8;
+                fraction /= 10;
+            }
+
+            if places > 0 {
+                if cursor == 0 {
+                    panic!("Buffer too small!");
+                }
+                cursor -= 1;
+                buffer[cursor] = b'.';
+            }
+
+            // Handle the integer part
+            let mut integer_part = fabs(ipart);
+            let mut digit_count = 0;
+            loop {
+                if cursor == 0 {
+                    panic!("Buffer too small!");
+                }
+
+                if digit_count == 3 {
+                    cursor -= 1;
+                    buffer[cursor] = sep as u8;
+                    digit_count = 0;
+                }
+
+                cursor -= 1;
+                buffer[cursor] = b'0' + (integer_part % 10f64) as u8;
+                integer_part /= 10f64;
+                digit_count += 1;
+
+                if integer_part < 1f64 {
+                    break;
+                }
+            }
+
+            // Add the negative sign if necessary
+            if is_negative {
+                if cursor == 0 {
+                    panic!("Buffer too small!");
+                }
+                cursor -= 1;
+                buffer[cursor] = b'-';
+            }
+
+            // Return a &str pointing to the formatted result
+            let formatted = core::str::from_utf8(&buffer[cursor..]).unwrap();
+            return write!(f, "{}{}{}{}", formatted, space, scale, opts.suffix);
+        }
 
         write!(f, "{:.*}{}{}{}", places, size, space, scale, opts.suffix)
     }

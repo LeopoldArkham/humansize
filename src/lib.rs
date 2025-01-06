@@ -144,4 +144,4 @@ mod impl_style;
 pub use impl_style::{FormatSize, FormatSizeI};
 
 mod formatters;
-pub use formatters::{SizeFormatter, ISizeFormatter};
+pub use formatters::{ISizeFormatter, SizeFormatter};

@@ -1,6 +1,9 @@
-pub(crate) static SCALE_DECIMAL: [&str; 9] = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+pub(crate) const SCALE_LENGTH: usize = 9;
 
-pub(crate) static SCALE_DECIMAL_LONG: [&str; 9] = [
+pub(crate) const SCALE_DECIMAL: [&str; SCALE_LENGTH] =
+    ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+pub(crate) const SCALE_DECIMAL_LONG: [&str; SCALE_LENGTH] = [
     "Bytes",
     "Kilobytes",
     "Megabytes",
@@ -12,10 +15,10 @@ pub(crate) static SCALE_DECIMAL_LONG: [&str; 9] = [
     "Yottabytes",
 ];
 
-pub(crate) static SCALE_BINARY: [&str; 9] =
+pub(crate) const SCALE_BINARY: [&str; SCALE_LENGTH] =
     ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 
-pub(crate) static SCALE_BINARY_LONG: [&str; 9] = [
+pub(crate) const SCALE_BINARY_LONG: [&str; SCALE_LENGTH] = [
     "Bytes",
     "Kibibytes",
     "Mebibytes",
@@ -27,11 +30,11 @@ pub(crate) static SCALE_BINARY_LONG: [&str; 9] = [
     "Yobibytes",
 ];
 
-pub(crate) static SCALE_DECIMAL_BIT: [&str; 9] = [
+pub(crate) const SCALE_DECIMAL_BIT: [&str; SCALE_LENGTH] = [
     "bits", "kbit", "Mbit", "Gbit", "Tbit", "Pbit", "Ebit", "Zbit", "Ybit",
 ];
 
-pub(crate) static SCALE_DECIMAL_BIT_LONG: [&str; 9] = [
+pub(crate) const SCALE_DECIMAL_BIT_LONG: [&str; SCALE_LENGTH] = [
     "Bits",
     "Kilobits",
     "Megabits",
@@ -43,11 +46,11 @@ pub(crate) static SCALE_DECIMAL_BIT_LONG: [&str; 9] = [
     "Yottabits",
 ];
 
-pub(crate) static SCALE_BINARY_BIT: [&str; 9] = [
+pub(crate) const SCALE_BINARY_BIT: [&str; SCALE_LENGTH] = [
     "bits", "Kibit", "Mibit", "Gibit", "Tibit", "Pibit", "Eibit", "Zibit", "Yibit",
 ];
 
-pub(crate) static SCALE_BINARY_BIT_LONG: [&str; 9] = [
+pub(crate) const SCALE_BINARY_BIT_LONG: [&str; SCALE_LENGTH] = [
     "bits", "Kibibits", "Mebibits", "Gibibits", "Tebibits", "Pebibits", "Exbibits", "Zebibits",
     "Yobibits",
 ];

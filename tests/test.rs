@@ -16,9 +16,9 @@ fn test_sizes() {
     assert_eq!(format_size_i(1000f32, DECIMAL), "1 kB");
     assert_eq!(format_size_i(1000f64, DECIMAL), "1 kB");
 
-
     {
-        const CUSTOM_OPTIONS: FormatSizeOptions = FormatSizeOptions::from(DECIMAL).space_after_value(false);
+        const CUSTOM_OPTIONS: FormatSizeOptions =
+            FormatSizeOptions::from(DECIMAL).space_after_value(false);
         assert_eq!(format_size(1000u32, CUSTOM_OPTIONS), "1kB");
     }
 
@@ -35,7 +35,8 @@ fn test_sizes() {
     }
 
     {
-        const CUSTOM_OPTIONS: FormatSizeOptions = FormatSizeOptions::from(BINARY).fixed_at(Some(FixedAt::Base));
+        const CUSTOM_OPTIONS: FormatSizeOptions =
+            FormatSizeOptions::from(BINARY).fixed_at(Some(FixedAt::Base));
         assert_eq!(format_size(2048u32, CUSTOM_OPTIONS), "2048 B");
     }
 
@@ -47,7 +48,8 @@ fn test_sizes() {
     }
 
     {
-        const CUSTOM_OPTIONS: FormatSizeOptions = FormatSizeOptions::from(BINARY).fixed_at(Some(FixedAt::Kilo));
+        const CUSTOM_OPTIONS: FormatSizeOptions =
+            FormatSizeOptions::from(BINARY).fixed_at(Some(FixedAt::Kilo));
         assert_eq!(format_size(16584975u32, CUSTOM_OPTIONS), "16196.26 KiB");
         assert_eq!(format_size_i(-16584975, CUSTOM_OPTIONS), "-16196.26 KiB");
     }
@@ -63,7 +65,8 @@ fn test_sizes() {
     }
 
     {
-        const CUSTOM_OPTIONS: FormatSizeOptions = FormatSizeOptions::from(DECIMAL).base_unit(BaseUnit::Bit);
+        const CUSTOM_OPTIONS: FormatSizeOptions =
+            FormatSizeOptions::from(DECIMAL).base_unit(BaseUnit::Bit);
         assert_eq!((format_size(1usize, CUSTOM_OPTIONS)), "1 bit");
         assert_eq!((format_size(150usize, CUSTOM_OPTIONS)), "150 bits");
         assert_eq!((format_size(1000usize, CUSTOM_OPTIONS)), "1 kbit");
@@ -122,3 +125,85 @@ fn max_value_binary() {
 
     assert_eq!(format_size(core::u64::MAX, &OPTIONS), "16 Exbibytes",);
 }
+
+#[test]
+fn max_value_binary_128() {
+    const OPTIONS: FormatSizeOptions = FormatSizeOptions::from(BINARY)
+        .decimal_places(7)
+        .long_units(true);
+
+    assert_eq!(
+        format_size(core::u128::MAX, &OPTIONS),
+        "281474976710656 Yobibytes",
+    );
+}
+
+#[test]
+fn separate_thousands() {
+    const OPTIONS: FormatSizeOptions = FormatSizeOptions::from(DECIMAL)
+        .fixed_at(Some(FixedAt::Kilo))
+        .thousands_separator(Some(' '));
+
+    assert_eq!(format_size(1000000u32, &OPTIONS), "1 000 kB",);
+}
+
+#[test]
+fn separate_thousands_large() {
+    const OPTIONS: FormatSizeOptions = FormatSizeOptions::from(DECIMAL)
+        .fixed_at(Some(FixedAt::Kilo))
+        .thousands_separator(Some(' '));
+
+    assert_eq!(format_size(900000000000u64, &OPTIONS), "900 000 000 kB",);
+}
+
+#[test]
+fn separate_thousands_i() {
+    const OPTIONS: FormatSizeOptions = FormatSizeOptions::from(DECIMAL)
+        .fixed_at(Some(FixedAt::Kilo))
+        .thousands_separator(Some(' '));
+
+    assert_eq!(format_size_i(-1000000i32, &OPTIONS), "-1 000 kB",);
+}
+
+#[test]
+fn thousands_separator_decimal() {
+    const CUSTOM_OPTIONS: FormatSizeOptions = FormatSizeOptions::from(BINARY)
+        .thousands_separator(Some('_'))
+        .fixed_at(Some(FixedAt::Kilo));
+    assert_eq!(format_size(16584975u32, CUSTOM_OPTIONS), "16_196.26 KiB");
+}
+
+#[test]
+fn thousands_separator_decimal_2() {
+    const CUSTOM_OPTIONS: FormatSizeOptions = FormatSizeOptions::from(BINARY)
+        .thousands_separator(Some('_'))
+        .fixed_at(Some(FixedAt::Kilo))
+        .decimal_places(5);
+    assert_eq!(format_size(16584975u32, CUSTOM_OPTIONS), "16_196.26465 KiB");
+}
+
+#[test]
+fn thousands_separator_decimal_3() {
+    const CUSTOM_OPTIONS: FormatSizeOptions = FormatSizeOptions::from(DECIMAL)
+        .thousands_separator(Some('_'))
+        .fixed_at(Some(FixedAt::Kilo))
+        .decimal_places(5)
+        .decimal_zeroes(5);
+    assert_eq!(format_size(10000000u32, CUSTOM_OPTIONS), "10_000.00000 kB");
+}
+
+#[test]
+fn padding() {
+    let res = format_size(1000u32, DECIMAL);
+    let formatted = format!("{:>5}", res);
+
+    assert_eq!(formatted, " 1 kB");
+}
+
+// #[test]
+// fn padding_no_alloc() {
+//     let res_no_alloc = SizeFormatter::new(1000u32, DECIMAL);
+//     let formatted_no_alloc = format!("{:>5}", res_no_alloc);
+
+//     assert_eq!(formatted_no_alloc, " 1 kB");
+// }
